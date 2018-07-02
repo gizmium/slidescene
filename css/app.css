@@ -6,3 +6,8 @@ body {
   -webkit-user-select: none;
   user-select: none;
 }
+
+.main {
+  background-color: #fafafa;
+  margin: 0;
+}
