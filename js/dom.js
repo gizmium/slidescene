@@ -14,6 +14,17 @@
     });
   };
 
+  dom.transform = function(el, value) {
+    dom.css(el, {
+      transform: value,
+      webkitTransform: value,
+    });
+  };
+
+  dom.translateY = function(el, y) {
+    dom.transform(el, 'translateY(' + y + 'px)');
+  };
+
   if (typeof module !== 'undefined' && module.exports) {
     module.exports = dom;
   } else {
