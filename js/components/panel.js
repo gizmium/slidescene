@@ -7,6 +7,7 @@
   var Panel = jCore.Component.inherits(function(props) {
     this.top = this.prop(props.top);
     this.height = this.prop(props.height);
+    this.hasBorder = this.prop(props.border !== false);
   });
 
   Panel.prototype.render = function() {
@@ -20,6 +21,10 @@
 
     this.redrawBy('height', function(height) {
       dom.css(this.element(), { height: height + 'px' });
+    });
+
+    this.redrawBy('hasBorder', function(hasBorder) {
+      dom.toggleClass(this.element(), 'no-border', !hasBorder);
     });
   };
 

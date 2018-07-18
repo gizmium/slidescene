@@ -21,3 +21,7 @@ body {
   right: 0;
   width: 576px;
 }
+
+.panel.no-border {
+  border: 0;
+}
