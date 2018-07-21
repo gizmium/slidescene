@@ -10,6 +10,12 @@
     this.hasBorder = this.prop(props.border !== false);
   });
 
+  Panel.prototype.load = function(url) {
+    return dom.ajax({ type: 'GET', url: url }).then(function(text) {
+      dom.html(this.findElement('.panel-content'), text);
+    }.bind(this));
+  };
+
   Panel.prototype.render = function() {
     return dom.render(Panel.HTML_TEXT);
   };
@@ -28,7 +34,11 @@
     });
   };
 
-  Panel.HTML_TEXT = '<div class="panel"></div>';
+  Panel.HTML_TEXT = [
+    '<div class="panel">',
+      '<div class="panel-content"></div>',
+    '</div>',
+  ].join('');
 
   if (typeof module !== 'undefined' && module.exports) {
     module.exports = Panel;

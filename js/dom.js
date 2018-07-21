@@ -13,6 +13,10 @@
     return el;
   };
 
+  dom.html = function(el, s) {
+    el.innerHTML = s;
+  };
+
   dom.css = function(el, props) {
     var style = el.style;
     Object.keys(props).forEach(function(key) {
