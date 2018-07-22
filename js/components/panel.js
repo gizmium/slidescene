@@ -35,7 +35,7 @@
   };
 
   Panel.HTML_TEXT = [
-    '<div class="panel">',
+    '<div class="panel hide">',
       '<div class="panel-content"></div>',
     '</div>',
   ].join('');

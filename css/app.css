@@ -22,6 +22,10 @@ body {
   width: 576px;
 }
 
+.panel.hide {
+  opacity: 0;
+}
+
 .panel.no-border {
   border: 0;
 }
