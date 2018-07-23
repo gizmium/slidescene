@@ -5,13 +5,14 @@
   var dom = app.dom || require('../dom.js');
 
   var Panel = jCore.Component.inherits(function(props) {
+    this.url = this.prop(props.url);
     this.top = this.prop(props.top);
     this.height = this.prop(props.height);
     this.hasBorder = this.prop(props.border !== false);
   });
 
-  Panel.prototype.load = function(url) {
-    return dom.ajax({ type: 'GET', url: url }).then(function(text) {
+  Panel.prototype.load = function() {
+    return dom.ajax({ type: 'GET', url: this.url() }).then(function(text) {
       dom.html(this.findElement('.panel-content'), text);
     }.bind(this));
   };
