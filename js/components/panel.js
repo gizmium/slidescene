@@ -9,6 +9,7 @@
     this.top = this.prop(props.top);
     this.height = this.prop(props.height);
     this.hasBorder = this.prop(props.border !== false);
+    this.visible = this.prop(false);
   });
 
   Panel.prototype.load = function() {
@@ -34,10 +35,14 @@
     this.redrawBy('hasBorder', function(hasBorder) {
       dom.toggleClass(this.element(), 'no-border', !hasBorder);
     });
+
+    this.redrawBy('visible', function(visible) {
+      dom.toggleClass(this.element(), 'hide', !visible);
+    });
   };
 
   Panel.HTML_TEXT = [
-    '<div class="panel hide">',
+    '<div class="panel">',
       '<div class="panel-content"></div>',
     '</div>',
   ].join('');
