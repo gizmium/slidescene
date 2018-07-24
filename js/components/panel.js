@@ -14,6 +14,7 @@
   Panel.prototype.load = function() {
     return dom.ajax({ type: 'GET', url: this.url() }).then(function(text) {
       dom.html(this.findElement('.panel-content'), text);
+      return this;
     }.bind(this));
   };
 
