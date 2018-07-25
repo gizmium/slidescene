@@ -11,6 +11,7 @@
   Content.prototype.loadPanel = function(props) {
     var panel = new Panel(props);
     panel.parentElement(this.element());
+    panel.redraw();
     this.panels.push(panel);
     return panel.load();
   };
