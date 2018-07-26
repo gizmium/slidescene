@@ -43,6 +43,23 @@
     dom.transform(el, 'translateY(' + y + 'px)');
   };
 
+  dom.supportsTouch = function() {
+    return ('createTouch' in document);
+  };
+
+  dom.changedTouch = function(event) {
+    return (dom.supportsTouch() && 'changedTouches' in event ? event.changedTouches[0] : null);
+  };
+
+  dom.target = function(event) {
+    var touch = dom.changedTouch(event);
+    return (touch ? document.elementFromPoint(touch.clientX, touch.clientY) : event.target);
+  };
+
+  dom.cancel = function(event) {
+    event.preventDefault();
+  };
+
   dom.ajax = function(opt) {
     var type = opt.type;
     var url = opt.url;
