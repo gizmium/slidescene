@@ -9,6 +9,7 @@ body {
 
 .main {
   background-color: #fafafa;
+  cursor: default;
   margin: 0;
 }
 
