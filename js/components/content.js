@@ -2,6 +2,7 @@
   'use strict';
 
   var jCore = require('jcore');
+  var helper = app.helper || require('../helper.js');
   var Panel = app.Panel || require('./panel.js');
 
   var Content = jCore.Component.inherits(function() {
@@ -14,6 +15,11 @@
     panel.redraw();
     this.panels.push(panel);
     return panel.load();
+  };
+
+  Content.prototype.removePanel = function(panel) {
+    panel.parentElement(null);
+    helper.remove(this.panels, panel);
   };
 
   if (typeof module !== 'undefined' && module.exports) {
