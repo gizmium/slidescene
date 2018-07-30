@@ -8,7 +8,6 @@
     this.url = this.prop(props.url);
     this.top = this.prop(props.top);
     this.height = this.prop(props.height);
-    this.hasBorder = this.prop(props.border !== false);
     this.visible = this.prop(false);
   });
 
@@ -30,10 +29,6 @@
 
     this.redrawBy('height', function(height) {
       dom.css(this.element(), { height: height + 'px' });
-    });
-
-    this.redrawBy('hasBorder', function(hasBorder) {
-      dom.toggleClass(this.element(), 'no-border', !hasBorder);
     });
 
     this.redrawBy('visible', function(visible) {
