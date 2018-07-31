@@ -11,6 +11,7 @@ body {
   background-color: #212121;
   cursor: default;
   margin: 0;
+  overflow: hidden;
 }
 
 .panel {
