@@ -10,8 +10,16 @@ body {
 .main {
   background-color: #212121;
   cursor: default;
+  height: 100%;
   margin: 0;
   overflow: hidden;
+  position: absolute;
+  width: 100%;
+}
+
+.content {
+  height: 100%;
+  width: 100%;
 }
 
 .panel {

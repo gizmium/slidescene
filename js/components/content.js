@@ -7,6 +7,7 @@
 
   var Content = jCore.Component.inherits(function() {
     this.panels = [];
+    this.draggable = new Content.Draggable(this);
   });
 
   Content.prototype.loadPanel = function(props) {
@@ -21,6 +22,33 @@
     panel.parentElement(null);
     helper.remove(this.panels, panel);
   };
+
+  Content.prototype.movePanels = function(dy) {
+    this.panels.forEach(function(panel) {
+      panel.top(panel.top() + dy);
+    });
+  };
+
+  Content.prototype.oninit = function() {
+    this.draggable.enable();
+  };
+
+  Content.Draggable = (function() {
+    var Draggable = jCore.Draggable.inherits();
+
+    Draggable.prototype.onstart = function(content, x, y, event, context) {
+      context.dy = 0;
+    };
+
+    Draggable.prototype.onmove = function(content, dx, dy, event, context) {
+      content.movePanels(dy - context.dy);
+      context.dy = dy;
+    };
+
+    Draggable.prototype.onend = function(content, dx, dy, event, context) {};
+
+    return Draggable;
+  })();
 
   if (typeof module !== 'undefined' && module.exports) {
     module.exports = Content;
