@@ -24,6 +24,15 @@
   };
 
   Content.prototype.movePanels = function(dy) {
+    if (this.panels.length === 0) {
+      return;
+    }
+    var t = this.panels.reduce(function(t, panel) {
+      return Math.max(t, panel.marginTop() / 2 - panel.top());
+    }, Number.MIN_VALUE);
+    if (dy > t) {
+      dy = t;
+    }
     this.panels.forEach(function(panel) {
       panel.top(panel.top() + dy);
     });

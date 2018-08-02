@@ -9,6 +9,7 @@
     this.top = this.prop(props.top);
     this.height = this.prop(props.height);
     this.visible = this.prop(false);
+    this.marginTop = this.prop(24);
   });
 
   Panel.prototype.load = function() {
