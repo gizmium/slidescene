@@ -63,13 +63,19 @@
     var Draggable = jCore.Draggable.inherits();
 
     Draggable.prototype.onstart = function(content, x, y, event, context) {
+      context.my = 0;
       context.dy = 0;
       content.movePanelsWithAnimation(0);
     };
 
     Draggable.prototype.onmove = function(content, dx, dy, event, context) {
-      content.movePanels(dy - context.dy);
+      var my = dy - context.dy;
+      if (my === 0) {
+        return;
+      }
+      context.my = my;
       context.dy = dy;
+      content.movePanels(my);
     };
 
     Draggable.prototype.onend = function(content, dx, dy, event, context) {
@@ -99,8 +105,8 @@
       var d;
       if (hasNext) {
         var db = dt - panel.marginTop() - panel.height();
-        if (Math.abs(dy) >= 24) {
-          d = (dy > 0 ? dt : db);
+        if (Math.abs(dt) >= 24 && Math.abs(db) >= 24) {
+          d = (context.my > 0 ? dt : db);
         } else {
           d = (Math.abs(dt) < Math.abs(db) ? dt : db);
         }
