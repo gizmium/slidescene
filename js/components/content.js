@@ -3,6 +3,7 @@
 
   var jCore = require('jcore');
   var helper = app.helper || require('../helper.js');
+  var dom = app.dom || require('../dom.js');
   var Panel = app.Panel || require('./panel.js');
 
   var Content = jCore.Component.inherits(function() {
@@ -66,6 +67,7 @@
     var Draggable = jCore.Draggable.inherits();
 
     Draggable.prototype.onstart = function(content, x, y, event, context) {
+      dom.cancel(event);
       context.my = 0;
       context.dy = 0;
       content.movePanelsWithAnimation(0);
