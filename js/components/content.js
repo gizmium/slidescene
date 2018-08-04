@@ -64,6 +64,7 @@
 
     Draggable.prototype.onstart = function(content, x, y, event, context) {
       context.dy = 0;
+      content.movePanelsWithAnimation(0);
     };
 
     Draggable.prototype.onmove = function(content, dx, dy, event, context) {
@@ -71,7 +72,44 @@
       context.dy = dy;
     };
 
-    Draggable.prototype.onend = function(content, dx, dy, event, context) {};
+    Draggable.prototype.onend = function(content, dx, dy, event, context) {
+      if (content.panels.length === 0) {
+        return;
+      }
+      // find that a part of the panel located on the out of the window
+      var panel = helper.findLast(content.panels, function(panel) {
+        var dt = panel.marginTop() / 2 - panel.top();
+        var db = dt - panel.marginTop() - panel.height();
+        return (dt * db < 0);
+      });
+      if (!panel) {
+        var mindt = content.panels.reduce(function(t, panel) {
+          return Math.min(t, panel.marginTop() / 2 - panel.top());
+        }, Number.MAX_VALUE);
+        if (mindt > 0) {
+          // all panels are located on the out of the window
+          content.movePanelsWithAnimation(mindt);
+        }
+        return;
+      }
+      var hasNext = content.panels.some(function(p) {
+        return (p.top() + p.height() > panel.top() + panel.height());
+      });
+      var dt = panel.marginTop() / 2 - panel.top();
+      var d;
+      if (hasNext) {
+        var db = dt - panel.marginTop() - panel.height();
+        if (Math.abs(dy) >= 24) {
+          d = (dy > 0 ? dt : db);
+        } else {
+          d = (Math.abs(dt) < Math.abs(db) ? dt : db);
+        }
+      } else {
+        // leave the last panel
+        d = dt;
+      }
+      content.movePanelsWithAnimation(d);
+    };
 
     return Draggable;
   })();

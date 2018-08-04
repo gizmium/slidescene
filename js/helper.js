@@ -10,6 +10,15 @@
     }
   };
 
+  helper.findLast = function(array, callback) {
+    for (var i = array.length - 1; i >= 0; i--) {
+      if (callback(array[i], i, array)) {
+        return array[i];
+      }
+    }
+    return null;
+  };
+
   if (typeof module !== 'undefined' && module.exports) {
     module.exports = helper;
   } else {
