@@ -49,7 +49,11 @@
 
   Content.prototype.onredraw = function() {
     this.redrawBy('movePanelsWithAnimation', function(rest) {
-      if (this.panels.length === 0 || rest === 0) {
+      if (this.panels.length === 0) {
+        return;
+      }
+      if (rest === 0) {
+        this.onanimationend();
         return;
       }
       var dy = (rest > 0 ? 1 : -1) * Math.min(Math.abs(rest), 24);
@@ -61,6 +65,16 @@
         this.movePanelsWithAnimation(rest - dy);
       }.bind(this));
     });
+  };
+
+  Content.prototype.onanimationend = function() {
+    // remove panels located on the out of the window
+    this.panels.slice().forEach(function(panel) {
+      var db = -(panel.top() + panel.marginTop() / 2 + panel.height());
+      if (db >= 0) {
+        this.removePanel(panel);
+      }
+    }.bind(this));
   };
 
   Content.Draggable = (function() {
