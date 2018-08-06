@@ -13,6 +13,10 @@
     this.paddingBottom = this.prop(12);
   });
 
+  Panel.prototype.bottom = function() {
+    return this.top() + this.paddingTop() + this.height() + this.paddingBottom();
+  };
+
   Panel.prototype.load = function() {
     return dom.ajax({ type: 'GET', url: this.url() }).then(function(text) {
       dom.html(this.findElement('.panel-content'), text);

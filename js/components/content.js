@@ -70,8 +70,7 @@
   Content.prototype.onanimationend = function() {
     // remove panels located on the out of the window
     this.panels.slice().forEach(function(panel) {
-      var db = -(panel.top() + panel.paddingTop() + panel.height() + panel.paddingBottom());
-      if (db >= 0) {
+      if (panel.bottom() <= 0) {
         this.removePanel(panel);
       }
     }.bind(this));
@@ -103,9 +102,7 @@
       }
       // find that a part of the panel located on the out of the window
       var panel = helper.findLast(content.panels, function(panel) {
-        var dt = -panel.top();
-        var db = dt - panel.paddingTop() - panel.height() - panel.paddingBottom();
-        return (dt * db < 0);
+        return (panel.top() * panel.bottom() < 0);
       });
       if (!panel) {
         var mindt = content.panels.reduce(function(t, panel) {
@@ -118,14 +115,12 @@
         return;
       }
       var hasNext = content.panels.some(function(p) {
-        var a = p.top() + p.paddingTop() + p.height() + p.paddingBottom();
-        var b = panel.top() + panel.paddingTop() + panel.height() + panel.paddingBottom();
-        return (a > b);
+        return (p.bottom() > panel.bottom());
       });
       var dt = -panel.top();
       var d;
       if (hasNext) {
-        var db = dt - panel.paddingTop() - panel.height() - panel.paddingBottom();
+        var db = -panel.bottom();
         if (Math.abs(dt) >= 24 && Math.abs(db) >= 24) {
           d = (context.my > 0 ? dt : db);
         } else {
