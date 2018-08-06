@@ -81,19 +81,19 @@
 
     Draggable.prototype.onstart = function(content, x, y, event, context) {
       dom.cancel(event);
-      context.my = 0;
       context.dy = 0;
+      context.ddy = 0;
       content.movePanelsWithAnimation(0);
     };
 
     Draggable.prototype.onmove = function(content, dx, dy, event, context) {
-      var my = dy - context.dy;
-      if (my === 0) {
+      var ddy = dy - context.dy;
+      if (ddy === 0) {
         return;
       }
-      context.my = my;
       context.dy = dy;
-      content.movePanels(my);
+      context.ddy = ddy;
+      content.movePanels(ddy);
     };
 
     Draggable.prototype.onend = function(content, dx, dy, event, context) {
@@ -122,7 +122,7 @@
       if (hasNext) {
         var db = -panel.bottom();
         if (Math.abs(dt) >= 24 && Math.abs(db) >= 24) {
-          d = (context.my > 0 ? dt : db);
+          d = (context.ddy > 0 ? dt : db);
         } else {
           d = (Math.abs(dt) < Math.abs(db) ? dt : db);
         }
