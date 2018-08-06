@@ -23,7 +23,6 @@ body {
 }
 
 .panel {
-  background-color: #fafafa;
   left: 0;
   margin: 0 auto;
   position: absolute;
@@ -31,6 +30,12 @@ body {
   -webkit-transition: opacity 0.5s ease-in-out;
   transition: opacity 0.5s ease-in-out;
   width: 624px;
+}
+
+.panel-content {
+  background-color: #fafafa;
+  height: 100%;
+  width: 100%;
 }
 
 .panel.hide {

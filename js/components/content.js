@@ -30,7 +30,7 @@
       return;
     }
     var t = this.panels.reduce(function(t, panel) {
-      return Math.max(t, panel.marginTop() / 2 - panel.top());
+      return Math.max(t, -panel.top());
     }, -Number.MAX_VALUE);
     if (dy > t) {
       dy = t;
@@ -70,7 +70,7 @@
   Content.prototype.onanimationend = function() {
     // remove panels located on the out of the window
     this.panels.slice().forEach(function(panel) {
-      var db = -(panel.top() + panel.marginTop() / 2 + panel.height());
+      var db = -(panel.top() + panel.paddingTop() + panel.height() + panel.paddingBottom());
       if (db >= 0) {
         this.removePanel(panel);
       }
@@ -103,13 +103,13 @@
       }
       // find that a part of the panel located on the out of the window
       var panel = helper.findLast(content.panels, function(panel) {
-        var dt = panel.marginTop() / 2 - panel.top();
-        var db = dt - panel.marginTop() - panel.height();
+        var dt = -panel.top();
+        var db = dt - panel.paddingTop() - panel.height() - panel.paddingBottom();
         return (dt * db < 0);
       });
       if (!panel) {
         var mindt = content.panels.reduce(function(t, panel) {
-          return Math.min(t, panel.marginTop() / 2 - panel.top());
+          return Math.min(t, -panel.top());
         }, Number.MAX_VALUE);
         if (mindt > 0) {
           // all panels are located on the out of the window
@@ -118,12 +118,14 @@
         return;
       }
       var hasNext = content.panels.some(function(p) {
-        return (p.top() + p.height() > panel.top() + panel.height());
+        var a = p.top() + p.paddingTop() + p.height() + p.paddingBottom();
+        var b = panel.top() + panel.paddingTop() + panel.height() + panel.paddingBottom();
+        return (a > b);
       });
-      var dt = panel.marginTop() / 2 - panel.top();
+      var dt = -panel.top();
       var d;
       if (hasNext) {
-        var db = dt - panel.marginTop() - panel.height();
+        var db = dt - panel.paddingTop() - panel.height() - panel.paddingBottom();
         if (Math.abs(dt) >= 24 && Math.abs(db) >= 24) {
           d = (context.my > 0 ? dt : db);
         } else {

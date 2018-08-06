@@ -9,7 +9,8 @@
     this.top = this.prop(props.top);
     this.height = this.prop(props.height);
     this.visible = this.prop(false);
-    this.marginTop = this.prop(24);
+    this.paddingTop = this.prop(12);
+    this.paddingBottom = this.prop(12);
   });
 
   Panel.prototype.load = function() {
@@ -34,6 +35,14 @@
 
     this.redrawBy('visible', function(visible) {
       dom.toggleClass(this.element(), 'hide', !visible);
+    });
+
+    this.redrawBy('paddingTop', function(paddingTop) {
+      dom.css(this.element(), { 'padding-top': paddingTop + 'px' });
+    });
+
+    this.redrawBy('paddingBottom', function(paddingBottom) {
+      dom.css(this.element(), { 'padding-bottom': paddingBottom + 'px' });
     });
   };
 
