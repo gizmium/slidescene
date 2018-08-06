@@ -122,10 +122,10 @@
       if (hasNext) {
         var top = overflowPanel.top();
         var bottom = overflowPanel.bottom();
-        if (Math.abs(top) >= 24 && Math.abs(bottom) >= 24) {
+        if (top <= -24 && bottom >= 24) {
           d = (context.ddy > 0 ? -top : -bottom);
         } else {
-          d = (Math.abs(top) < Math.abs(bottom) ? -top : -bottom);
+          d = (-top < bottom ? -top : -bottom);
         }
       } else {
         // leave the last panel
