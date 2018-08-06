@@ -29,11 +29,12 @@
     if (this.panels.length === 0) {
       return;
     }
-    var t = this.panels.reduce(function(t, panel) {
-      return Math.max(t, -panel.top());
-    }, -Number.MAX_VALUE);
-    if (dy > t) {
-      dy = t;
+    var minTop = this.panels.reduce(function(top, panel) {
+      return Math.min(top, panel.top());
+    }, Number.MAX_VALUE);
+    if (minTop + dy > 0) {
+      // don't show an area above the top panel
+      dy = -minTop;
     }
     if (dy === 0) {
       return;
