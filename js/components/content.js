@@ -102,34 +102,34 @@
         return;
       }
       // find that a part of the panel located on the out of the window
-      var panel = helper.findLast(content.panels, function(panel) {
+      var overflowPanel = helper.findLast(content.panels, function(panel) {
         return (panel.top() * panel.bottom() < 0);
       });
-      if (!panel) {
-        var mindt = content.panels.reduce(function(t, panel) {
-          return Math.min(t, -panel.top());
-        }, Number.MAX_VALUE);
-        if (mindt > 0) {
+      if (!overflowPanel) {
+        var maxTop = content.panels.reduce(function(top, panel) {
+          return Math.max(top, panel.top());
+        }, -Number.MAX_VALUE);
+        if (maxTop < 0) {
           // all panels are located on the out of the window
-          content.movePanelsWithAnimation(mindt);
+          content.movePanelsWithAnimation(-maxTop);
         }
         return;
       }
-      var hasNext = content.panels.some(function(p) {
-        return (p.bottom() > panel.bottom());
+      var hasNext = content.panels.some(function(panel) {
+        return (panel.bottom() > overflowPanel.bottom());
       });
-      var dt = -panel.top();
       var d;
       if (hasNext) {
-        var db = -panel.bottom();
-        if (Math.abs(dt) >= 24 && Math.abs(db) >= 24) {
-          d = (context.ddy > 0 ? dt : db);
+        var top = overflowPanel.top();
+        var bottom = overflowPanel.bottom();
+        if (Math.abs(top) >= 24 && Math.abs(bottom) >= 24) {
+          d = (context.ddy > 0 ? -top : -bottom);
         } else {
-          d = (Math.abs(dt) < Math.abs(db) ? dt : db);
+          d = (Math.abs(top) < Math.abs(bottom) ? -top : -bottom);
         }
       } else {
         // leave the last panel
-        d = dt;
+        d = -overflowPanel.top();
       }
       content.movePanelsWithAnimation(d);
     };
