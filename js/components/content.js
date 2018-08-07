@@ -54,7 +54,9 @@
         return;
       }
       if (rest === 0) {
-        this.onanimationend();
+        setTimeout(function() {
+          this.onanimationend();
+        }.bind(this));
         return;
       }
       var dy = (rest > 0 ? 1 : -1) * Math.min(Math.abs(rest), 24);
