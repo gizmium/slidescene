@@ -18,9 +18,9 @@
   };
 
   Panel.prototype.load = function() {
-    return dom.ajax({ type: 'GET', url: this.url() }).then(function(text) {
-      dom.html(this.findElement('.panel-content'), text);
-      return this;
+    return new Promise(function(resolve) {
+      dom.attr(this.findElement('.panel-content'), { src: this.url() });
+      return resolve(this);
     }.bind(this));
   };
 
@@ -52,7 +52,7 @@
 
   Panel.HTML_TEXT = [
     '<div class="panel">',
-      '<div class="panel-content"></div>',
+      '<iframe class="panel-content" scrolling="no"></iframe>',
     '</div>',
   ].join('');
 

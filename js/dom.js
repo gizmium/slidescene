@@ -13,8 +13,10 @@
     return el;
   };
 
-  dom.html = function(el, s) {
-    el.innerHTML = s;
+  dom.attr = function(el, props) {
+    Object.keys(props).forEach(function(key) {
+      el.setAttribute(key, props[key]);
+    });
   };
 
   dom.css = function(el, props) {
