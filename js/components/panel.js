@@ -13,14 +13,20 @@
     this.paddingBottom = this.prop(12);
   });
 
+  Panel.prototype.contentElement = function() {
+    return this.findElement('.panel-content');
+  };
+
   Panel.prototype.bottom = function() {
     return this.top() + this.paddingTop() + this.height() + this.paddingBottom();
   };
 
   Panel.prototype.load = function() {
     return new Promise(function(resolve) {
-      dom.attr(this.findElement('.panel-content'), { src: this.url() });
-      return resolve(this);
+      dom.once(this.contentElement(), 'load', function() {
+        return resolve(this);
+      }.bind(this));
+      dom.attr(this.contentElement(), { src: this.url() });
     }.bind(this));
   };
 
