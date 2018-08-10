@@ -11,22 +11,16 @@
     this.visible = this.prop(false);
     this.paddingTop = this.prop(12);
     this.paddingBottom = this.prop(12);
+    this.content = new Panel.Content({ element: this.findElement('.panel-content') });
   });
-
-  Panel.prototype.contentElement = function() {
-    return this.findElement('.panel-content');
-  };
 
   Panel.prototype.bottom = function() {
     return this.top() + this.paddingTop() + this.height() + this.paddingBottom();
   };
 
   Panel.prototype.load = function() {
-    return new Promise(function(resolve) {
-      dom.once(this.contentElement(), 'load', function() {
-        return resolve(this);
-      }.bind(this));
-      dom.attr(this.contentElement(), { src: this.url() });
+    return this.content.load(this.url()).then(function() {
+      return this;
     }.bind(this));
   };
 
@@ -61,6 +55,21 @@
       '<iframe class="panel-content" scrolling="no"></iframe>',
     '</div>',
   ].join('');
+
+  Panel.Content = (function() {
+    var Content = jCore.Component.inherits();
+
+    Content.prototype.load = function(url) {
+      return new Promise(function(resolve) {
+        dom.once(this.element(), 'load', function() {
+          return resolve();
+        }.bind(this));
+        dom.attr(this.element(), { src: url });
+      }.bind(this));
+    };
+
+    return Content;
+  })();
 
   if (typeof module !== 'undefined' && module.exports) {
     module.exports = Panel;
