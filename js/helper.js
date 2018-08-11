@@ -10,8 +10,8 @@
     }
   };
 
-  helper.findLast = function(array, callback) {
-    for (var i = array.length - 1; i >= 0; i--) {
+  helper.find = function(array, callback) {
+    for (var i = 0, len = array.length; i < len; i++) {
       if (callback(array[i], i, array)) {
         return array[i];
       }

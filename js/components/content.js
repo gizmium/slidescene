@@ -104,7 +104,7 @@
         return;
       }
       // find that a part of the panel located on the out of the window
-      var overflowPanel = helper.findLast(content.panels, function(panel) {
+      var overflowPanel = helper.find(content.panels, function(panel) {
         return (panel.top() * panel.bottom() < 0);
       });
       if (!overflowPanel) {
