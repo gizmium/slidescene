@@ -35,6 +35,7 @@ body {
 .panel-content {
   background-color: #fafafa;
   border: 0;
+  display: block;
   height: 100%;
   pointer-events: none;
   width: 100%;

@@ -45,6 +45,10 @@
     dom.transform(el, 'translateY(' + y + 'px)');
   };
 
+  dom.contentHeight = function(iframe) {
+    return iframe.contentDocument.documentElement.scrollHeight;
+  };
+
   dom.on = function(el, type, listener, useCapture) {
     el.addEventListener(type, listener, !!useCapture);
   };

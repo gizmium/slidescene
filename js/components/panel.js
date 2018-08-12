@@ -7,12 +7,15 @@
   var Panel = jCore.Component.inherits(function(props) {
     this.url = this.prop(props.url);
     this.top = this.prop(props.top);
-    this.height = this.prop(props.height);
     this.visible = this.prop(false);
     this.paddingTop = this.prop(12);
     this.paddingBottom = this.prop(12);
     this.content = new Panel.Content({ element: this.findElement('.panel-content') });
   });
+
+  Panel.prototype.height = function() {
+    return this.content.height();
+  };
 
   Panel.prototype.bottom = function() {
     return this.top() + this.paddingTop() + this.height() + this.paddingBottom();
@@ -31,10 +34,6 @@
   Panel.prototype.onredraw = function() {
     this.redrawBy('top', function(top) {
       dom.translateY(this.element(), top);
-    });
-
-    this.redrawBy('height', function(height) {
-      dom.css(this.element(), { height: height + 'px' });
     });
 
     this.redrawBy('visible', function(visible) {
@@ -57,11 +56,15 @@
   ].join('');
 
   Panel.Content = (function() {
-    var Content = jCore.Component.inherits();
+    var Content = jCore.Component.inherits(function() {
+      this.height = this.prop(0);
+    });
 
     Content.prototype.load = function(url) {
       return new Promise(function(resolve) {
         dom.once(this.element(), 'load', function() {
+          this.height(dom.contentHeight(this.element()));
+          dom.css(this.element(), { height: this.height() + 'px' });
           return resolve();
         }.bind(this));
         dom.attr(this.element(), { src: url });
