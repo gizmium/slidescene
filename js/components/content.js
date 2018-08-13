@@ -98,6 +98,9 @@
       context.lockX = false;
       context.panel = content.panelFromTop(y);
       content.movePanelsWithAnimation(0);
+      if (context.panel) {
+        context.panel.moveWithAnimation(0);
+      }
     };
 
     Draggable.prototype.onmove = function(content, dx, dy, event, context) {
@@ -143,6 +146,7 @@
         return;
       }
       this.onendy(content, dx, dy, event, context);
+      this.onendx(content, dx, dy, event, context);
     };
 
     Draggable.prototype.onendy = function(content, dx, dy, event, context) {
@@ -177,6 +181,22 @@
         d = -overflowPanel.top();
       }
       content.movePanelsWithAnimation(d);
+    };
+
+    Draggable.prototype.onendx = function(content, dx, dy, event, context) {
+      var panel = context.panel;
+      if (!panel) {
+        return;
+      }
+      var d;
+      var left = -panel.scrollLeft() % panel.width();
+      var right = left + panel.width();
+      if (left <= -24 && right >= 24) {
+        d = (context.ddx > 0 ? -left : -right);
+      } else {
+        d = (-left < right ? -left : -right);
+      }
+      panel.moveWithAnimation(d);
     };
 
     return Draggable;

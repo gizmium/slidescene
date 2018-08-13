@@ -12,6 +12,7 @@
     this.width = this.prop(624);
     this.paddingTop = this.prop(12);
     this.paddingBottom = this.prop(12);
+    this.moveWithAnimation = this.prop(0);
     this.content = new Panel.Content({ element: this.findElement('.panel-content') });
   });
 
@@ -60,6 +61,22 @@
     this.redrawBy('paddingBottom', function(paddingBottom) {
       dom.css(this.element(), { 'padding-bottom': paddingBottom + 'px' });
     });
+
+    this.redrawBy('moveWithAnimation', function(rest) {
+      if (rest === 0) {
+        return;
+      }
+      if (!this.content.hasContent()) {
+        this.moveWithAnimation(0);
+        return;
+      }
+      var dx = (rest > 0 ? 1 : -1) * Math.min(Math.abs(rest), 24);
+      this.move(dx);
+      this.content.redraw();
+      setTimeout(function() {
+        this.moveWithAnimation(rest - dx);
+      }.bind(this));
+    });
   };
 
   Panel.HTML_TEXT = [
@@ -74,6 +91,10 @@
       this.height = this.prop(0);
       this.scrollLeft = this.prop(0);
     });
+
+    Content.prototype.hasContent = function() {
+      return dom.hasContent(this.element());
+    };
 
     Content.prototype.load = function(url) {
       return new Promise(function(resolve) {
