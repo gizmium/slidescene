@@ -92,10 +92,24 @@
       dom.cancel(event);
       context.dy = 0;
       context.ddy = 0;
+      context.lockY = false;
+      context.lockX = false;
       content.movePanelsWithAnimation(0);
     };
 
     Draggable.prototype.onmove = function(content, dx, dy, event, context) {
+      if (!context.lockY && !context.lockX) {
+        context.lockY = (Math.abs(dy) >= 24);
+      }
+      if (!context.lockY && !context.lockX) {
+        context.lockX = (Math.abs(dx) >= 24);
+      }
+      if (!context.lockX) {
+        this.onmovey(content, dx, dy, event, context);
+      }
+    };
+
+    Draggable.prototype.onmovey = function(content, dx, dy, event, context) {
       var ddy = dy - context.dy;
       if (ddy === 0) {
         return;
@@ -109,6 +123,10 @@
       if (content.panels.length === 0) {
         return;
       }
+      this.onendy(content, dx, dy, event, context);
+    };
+
+    Draggable.prototype.onendy = function(content, dx, dy, event, context) {
       // find that a part of the panel located on the out of the window
       var overflowPanel = helper.find(content.panels, function(panel) {
         return (panel.top() * panel.bottom() < 0);
