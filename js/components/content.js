@@ -92,8 +92,11 @@
       dom.cancel(event);
       context.dy = 0;
       context.ddy = 0;
+      context.dx = 0;
+      context.ddx = 0;
       context.lockY = false;
       context.lockX = false;
+      context.panel = content.panelFromTop(y);
       content.movePanelsWithAnimation(0);
     };
 
@@ -107,6 +110,9 @@
       if (!context.lockX) {
         this.onmovey(content, dx, dy, event, context);
       }
+      if (!context.lockY) {
+        this.onmovex(content, dx, dy, event, context);
+      }
     };
 
     Draggable.prototype.onmovey = function(content, dx, dy, event, context) {
@@ -117,6 +123,19 @@
       context.dy = dy;
       context.ddy = ddy;
       content.movePanels(ddy);
+    };
+
+    Draggable.prototype.onmovex = function(content, dx, dy, event, context) {
+      if (!context.panel) {
+        return;
+      }
+      var ddx = dx - context.dx;
+      if (ddx === 0) {
+        return;
+      }
+      context.dx = dx;
+      context.ddx = ddx;
+      context.panel.move(ddx);
     };
 
     Draggable.prototype.onend = function(content, dx, dy, event, context) {

@@ -25,6 +25,10 @@
     return this.content.scrollLeft(value);
   };
 
+  Panel.prototype.move = function(dx) {
+    this.scrollLeft(this.scrollLeft() - dx);
+  };
+
   Panel.prototype.load = function() {
     return this.content.load(this.url()).then(function() {
       return this;
