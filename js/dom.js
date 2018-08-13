@@ -49,6 +49,14 @@
     return iframe.contentDocument.documentElement.scrollHeight;
   };
 
+  dom.scrollX = function(iframe) {
+    return iframe.contentWindow.scrollX;
+  };
+
+  dom.scrollTo = function(iframe, x, y) {
+    iframe.contentWindow.scrollTo(x, y);
+  };
+
   dom.on = function(el, type, listener, useCapture) {
     el.addEventListener(type, listener, !!useCapture);
   };

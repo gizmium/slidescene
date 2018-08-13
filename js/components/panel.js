@@ -21,6 +21,10 @@
     return this.top() + this.paddingTop() + this.height() + this.paddingBottom();
   };
 
+  Panel.prototype.scrollLeft = function(value) {
+    return this.content.scrollLeft(value);
+  };
+
   Panel.prototype.load = function() {
     return this.content.load(this.url()).then(function() {
       return this;
@@ -58,17 +62,25 @@
   Panel.Content = (function() {
     var Content = jCore.Component.inherits(function() {
       this.height = this.prop(0);
+      this.scrollLeft = this.prop(0);
     });
 
     Content.prototype.load = function(url) {
       return new Promise(function(resolve) {
         dom.once(this.element(), 'load', function() {
           this.height(dom.contentHeight(this.element()));
+          this.scrollLeft(dom.scrollX(this.element()));
           dom.css(this.element(), { height: this.height() + 'px' });
           return resolve();
         }.bind(this));
         dom.attr(this.element(), { src: url });
       }.bind(this));
+    };
+
+    Content.prototype.onredraw = function() {
+      this.redrawBy('scrollLeft', function(scrollLeft) {
+        dom.scrollTo(this.element(), scrollLeft, 0);
+      });
     };
 
     return Content;
