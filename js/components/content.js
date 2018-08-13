@@ -12,6 +12,12 @@
     this.draggable = new Content.Draggable(this);
   });
 
+  Content.prototype.panelFromTop = function(top) {
+    return helper.find(this.panels, function(panel) {
+      return (panel.top() <= top && panel.bottom() >= top);
+    });
+  };
+
   Content.prototype.loadPanel = function(props) {
     var panel = new Panel(props);
     panel.parentElement(this.element());
