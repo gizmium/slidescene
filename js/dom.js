@@ -45,6 +45,10 @@
     dom.transform(el, 'translateY(' + y + 'px)');
   };
 
+  dom.contentWidth = function(iframe) {
+    return iframe.contentDocument.documentElement.scrollWidth;
+  };
+
   dom.contentHeight = function(iframe) {
     return iframe.contentDocument.documentElement.scrollHeight;
   };

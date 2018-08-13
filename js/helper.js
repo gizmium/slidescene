@@ -3,6 +3,10 @@
 
   var helper = {};
 
+  helper.clamp = function(number, lower, upper) {
+    return Math.min(Math.max(number, lower), upper);
+  };
+
   helper.remove = function(array, item) {
     var index = array.indexOf(item);
     if (index !== -1) {

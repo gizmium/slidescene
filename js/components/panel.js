@@ -2,12 +2,14 @@
   'use strict';
 
   var jCore = require('jcore');
+  var helper = app.helper || require('../helper.js');
   var dom = app.dom || require('../dom.js');
 
   var Panel = jCore.Component.inherits(function(props) {
     this.url = this.prop(props.url);
     this.top = this.prop(props.top);
     this.visible = this.prop(false);
+    this.width = this.prop(624);
     this.paddingTop = this.prop(12);
     this.paddingBottom = this.prop(12);
     this.content = new Panel.Content({ element: this.findElement('.panel-content') });
@@ -22,7 +24,10 @@
   };
 
   Panel.prototype.scrollLeft = function(value) {
-    return this.content.scrollLeft(value);
+    if (typeof value === 'undefined') {
+      return this.content.scrollLeft();
+    }
+    this.content.scrollLeft(helper.clamp(value, 0, this.content.width() - this.width()));
   };
 
   Panel.prototype.move = function(dx) {
@@ -65,6 +70,7 @@
 
   Panel.Content = (function() {
     var Content = jCore.Component.inherits(function() {
+      this.width = this.prop(0);
       this.height = this.prop(0);
       this.scrollLeft = this.prop(0);
     });
@@ -72,6 +78,7 @@
     Content.prototype.load = function(url) {
       return new Promise(function(resolve) {
         dom.once(this.element(), 'load', function() {
+          this.width(dom.contentWidth(this.element()));
           this.height(dom.contentHeight(this.element()));
           this.scrollLeft(dom.scrollX(this.element()));
           dom.css(this.element(), { height: this.height() + 'px' });
