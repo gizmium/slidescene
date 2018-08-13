@@ -8,6 +8,8 @@
     this.url = this.prop(props.url);
     this.top = this.prop(props.top);
     this.visible = this.prop(false);
+    this.paddingTop = this.prop(12);
+    this.paddingBottom = this.prop(12);
     this.content = new Panel.Content({ element: this.findElement('.panel-content') });
   });
 
@@ -16,7 +18,7 @@
   };
 
   Panel.prototype.bottom = function() {
-    return this.top() + this.height();
+    return this.top() + this.paddingTop() + this.height() + this.paddingBottom();
   };
 
   Panel.prototype.load = function() {
@@ -36,6 +38,14 @@
 
     this.redrawBy('visible', function(visible) {
       dom.toggleClass(this.element(), 'hide', !visible);
+    });
+
+    this.redrawBy('paddingTop', function(paddingTop) {
+      dom.css(this.element(), { 'padding-top': paddingTop + 'px' });
+    });
+
+    this.redrawBy('paddingBottom', function(paddingBottom) {
+      dom.css(this.element(), { 'padding-bottom': paddingBottom + 'px' });
     });
   };
 

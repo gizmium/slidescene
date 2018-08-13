@@ -23,13 +23,17 @@ body {
 }
 
 .panel {
+  left: 0;
+  margin: 0 auto;
   position: absolute;
+  right: 0;
   -webkit-transition: opacity 0.5s ease-in-out;
   transition: opacity 0.5s ease-in-out;
-  width: 100%;
+  width: 624px;
 }
 
 .panel-content {
+  background-color: #fafafa;
   border: 0;
   display: block;
   height: 100%;
