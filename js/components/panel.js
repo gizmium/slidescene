@@ -51,10 +51,14 @@
 
   Panel.prototype.onappend = function() {
     this.content.on('scroll', this.onscroll.bind(this));
+    this.leftButton.on('tap', this.onleft.bind(this));
+    this.rightButton.on('tap', this.onright.bind(this));
   };
 
   Panel.prototype.onremove = function() {
     this.content.removeAllListeners();
+    this.leftButton.removeAllListeners();
+    this.rightButton.removeAllListeners();
   };
 
   Panel.prototype.onredraw = function() {
@@ -80,6 +84,14 @@
     this.rightButton.disabled(scrollLeft === (this.content.width() - this.content.offsetWidth()));
   };
 
+  Panel.prototype.onleft = function() {
+    this.content.scrollToLeft();
+  };
+
+  Panel.prototype.onright = function() {
+    this.content.scrollToRight();
+  };
+
   Panel.HTML_TEXT = [
     '<div class="panel">',
       '<iframe class="panel-content" scrolling="no"></iframe>',
@@ -100,6 +112,20 @@
     Content.prototype.scroll = function(dx) {
       var scrollLeft = helper.clamp(this.scrollLeft() - dx, 0, this.width() - this.offsetWidth());
       this.scrollLeft(scrollLeft);
+    };
+
+    Content.prototype.scrollToLeft = function() {
+      setTimeout(function() {
+        var left = this.scrollLeft() % this.offsetWidth();
+        this.scrollWithAnimation(left !== 0 ? left : this.offsetWidth());
+      }.bind(this), 0);
+    };
+
+    Content.prototype.scrollToRight = function() {
+      setTimeout(function() {
+        var right = this.offsetWidth() - this.scrollLeft() % this.offsetWidth();
+        this.scrollWithAnimation(right !== 0 ? -right : -this.offsetWidth());
+      }.bind(this), 0);
     };
 
     Content.prototype.load = function(url) {
