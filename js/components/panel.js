@@ -82,6 +82,10 @@
   Panel.HTML_TEXT = [
     '<div class="panel">',
       '<iframe class="panel-content" scrolling="no"></iframe>',
+      '<div class="panel-controls">',
+        '<div class="panel-left-button panel-controls-item hide"></div>',
+        '<div class="panel-right-button panel-controls-item hide"></div>',
+      '</div>',
     '</div>',
   ].join('');
 
