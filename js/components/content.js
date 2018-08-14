@@ -161,6 +161,9 @@
         if (maxTop < 0) {
           // all panels are located on the out of the window
           content.movePanelsWithAnimation(-maxTop);
+        } else {
+          // XXX: no need to move panels but handle 'animationend' event
+          content.onanimationend();
         }
         return;
       }
