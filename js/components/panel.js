@@ -29,18 +29,18 @@
     return this.left() + this.content.offsetWidth();
   };
 
-  Panel.prototype.move = function(dx) {
-    this.content.move(dx);
-    this.onmove(this.content.scrollLeft());
+  Panel.prototype.scroll = function(dx) {
+    this.content.scroll(dx);
+    this.onscroll(this.content.scrollLeft());
   };
 
-  Panel.prototype.moveWithAnimation = function(dx) {
-    this.content.moveWithAnimation(dx);
+  Panel.prototype.scrollWithAnimation = function(dx) {
+    this.content.scrollWithAnimation(dx);
   };
 
   Panel.prototype.load = function() {
     return this.content.load(this.url()).then(function() {
-      this.onmove(this.content.scrollLeft());
+      this.onscroll(this.content.scrollLeft());
       return this;
     }.bind(this));
   };
@@ -50,7 +50,7 @@
   };
 
   Panel.prototype.onappend = function() {
-    this.content.on('move', this.onmove.bind(this));
+    this.content.on('scroll', this.onscroll.bind(this));
   };
 
   Panel.prototype.onremove = function() {
@@ -75,7 +75,7 @@
     });
   };
 
-  Panel.prototype.onmove = function(scrollLeft) {
+  Panel.prototype.onscroll = function(scrollLeft) {
     this.leftButton.disabled(scrollLeft === 0);
     this.rightButton.disabled(scrollLeft === (this.content.width() - this.content.offsetWidth()));
   };
@@ -94,10 +94,10 @@
       this.offsetWidth = this.prop(0);
       this.height = this.prop(0);
       this.scrollLeft = this.prop(0);
-      this.moveWithAnimation = this.prop(0);
+      this.scrollWithAnimation = this.prop(0);
     });
 
-    Content.prototype.move = function(dx) {
+    Content.prototype.scroll = function(dx) {
       var scrollLeft = helper.clamp(this.scrollLeft() - dx, 0, this.width() - this.offsetWidth());
       this.scrollLeft(scrollLeft);
     };
@@ -121,20 +121,20 @@
         dom.scrollTo(this.element(), scrollLeft, 0);
       });
 
-      this.redrawBy('moveWithAnimation', function(rest) {
+      this.redrawBy('scrollWithAnimation', function(rest) {
         if (rest === 0) {
           return;
         }
         if (!dom.hasContent(this.element())) {
-          this.moveWithAnimation(0);
+          this.scrollWithAnimation(0);
           return;
         }
         var dx = (rest > 0 ? 1 : -1) * Math.min(Math.abs(rest), 24);
-        this.move(dx);
+        this.scroll(dx);
         this.redraw();
         setTimeout(function() {
-          this.moveWithAnimation(rest - dx);
-          this.emit('move', this.scrollLeft());
+          this.scrollWithAnimation(rest - dx);
+          this.emit('scroll', this.scrollLeft());
         }.bind(this));
       });
     };

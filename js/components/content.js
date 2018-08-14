@@ -99,7 +99,7 @@
       context.panel = content.panelFromTop(y);
       content.movePanelsWithAnimation(0);
       if (context.panel) {
-        context.panel.moveWithAnimation(0);
+        context.panel.scrollWithAnimation(0);
       }
     };
 
@@ -138,7 +138,7 @@
       }
       context.dx = dx;
       context.ddx = ddx;
-      context.panel.move(ddx);
+      context.panel.scroll(ddx);
     };
 
     Draggable.prototype.onend = function(content, dx, dy, event, context) {
@@ -199,7 +199,7 @@
       } else {
         d = (-left < right ? -left : -right);
       }
-      panel.moveWithAnimation(d);
+      panel.scrollWithAnimation(d);
     };
 
     return Draggable;
