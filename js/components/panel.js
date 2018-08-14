@@ -4,6 +4,7 @@
   var jCore = require('jcore');
   var helper = app.helper || require('../helper.js');
   var dom = app.dom || require('../dom.js');
+  var Button = app.Button || require('./button.js');
 
   var Panel = jCore.Component.inherits(function(props) {
     this.url = this.prop(props.url);
@@ -12,6 +13,8 @@
     this.paddingTop = this.prop(12);
     this.paddingBottom = this.prop(12);
     this.content = new Panel.Content({ element: this.findElement('.panel-content') });
+    this.leftButton = new Button({ element: this.findElement('.panel-button-left') });
+    this.rightButton = new Button({ element: this.findElement('.panel-button-right') });
   });
 
   Panel.prototype.bottom = function() {
@@ -28,6 +31,7 @@
 
   Panel.prototype.move = function(dx) {
     this.content.move(dx);
+    this.onmove(this.content.scrollLeft());
   };
 
   Panel.prototype.moveWithAnimation = function(dx) {
@@ -36,12 +40,21 @@
 
   Panel.prototype.load = function() {
     return this.content.load(this.url()).then(function() {
+      this.onmove(this.content.scrollLeft());
       return this;
     }.bind(this));
   };
 
   Panel.prototype.render = function() {
     return dom.render(Panel.HTML_TEXT);
+  };
+
+  Panel.prototype.onappend = function() {
+    this.content.on('move', this.onmove.bind(this));
+  };
+
+  Panel.prototype.onremove = function() {
+    this.content.removeAllListeners();
   };
 
   Panel.prototype.onredraw = function() {
@@ -60,6 +73,11 @@
     this.redrawBy('paddingBottom', function(paddingBottom) {
       dom.css(this.element(), { 'padding-bottom': paddingBottom + 'px' });
     });
+  };
+
+  Panel.prototype.onmove = function(scrollLeft) {
+    this.leftButton.disabled(scrollLeft === 0);
+    this.rightButton.disabled(scrollLeft === (this.content.width() - this.content.offsetWidth()));
   };
 
   Panel.HTML_TEXT = [
@@ -116,6 +134,7 @@
         this.redraw();
         setTimeout(function() {
           this.moveWithAnimation(rest - dx);
+          this.emit('move', this.scrollLeft());
         }.bind(this));
       });
     };
