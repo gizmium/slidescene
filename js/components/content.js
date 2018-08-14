@@ -189,8 +189,8 @@
         return;
       }
       var d;
-      var left = -panel.scrollLeft() % panel.width();
-      var right = left + panel.width();
+      var left = panel.left();
+      var right = panel.right();
       if (left <= -24 && right >= 24) {
         d = (context.ddx > 0 ? -left : -right);
       } else {

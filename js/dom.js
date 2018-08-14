@@ -49,6 +49,10 @@
     return !!iframe.contentDocument;
   };
 
+  dom.offsetWidth = function(iframe) {
+    return iframe.contentDocument.documentElement.offsetWidth;
+  };
+
   dom.contentWidth = function(iframe) {
     return iframe.contentDocument.documentElement.scrollWidth;
   };

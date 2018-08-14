@@ -9,30 +9,29 @@
     this.url = this.prop(props.url);
     this.top = this.prop(props.top);
     this.visible = this.prop(false);
-    this.width = this.prop(624);
     this.paddingTop = this.prop(12);
     this.paddingBottom = this.prop(12);
-    this.moveWithAnimation = this.prop(0);
     this.content = new Panel.Content({ element: this.findElement('.panel-content') });
   });
 
-  Panel.prototype.height = function() {
-    return this.content.height();
-  };
-
   Panel.prototype.bottom = function() {
-    return this.top() + this.paddingTop() + this.height() + this.paddingBottom();
+    return this.top() + this.paddingTop() + this.content.height() + this.paddingBottom();
   };
 
-  Panel.prototype.scrollLeft = function(value) {
-    if (typeof value === 'undefined') {
-      return this.content.scrollLeft();
-    }
-    this.content.scrollLeft(helper.clamp(value, 0, this.content.width() - this.width()));
+  Panel.prototype.left = function() {
+    return -this.content.scrollLeft() % this.content.offsetWidth();
+  };
+
+  Panel.prototype.right = function() {
+    return this.left() + this.content.offsetWidth();
   };
 
   Panel.prototype.move = function(dx) {
-    this.scrollLeft(this.scrollLeft() - dx);
+    this.content.move(dx);
+  };
+
+  Panel.prototype.moveWithAnimation = function(dx) {
+    this.content.moveWithAnimation(dx);
   };
 
   Panel.prototype.load = function() {
@@ -61,22 +60,6 @@
     this.redrawBy('paddingBottom', function(paddingBottom) {
       dom.css(this.element(), { 'padding-bottom': paddingBottom + 'px' });
     });
-
-    this.redrawBy('moveWithAnimation', function(rest) {
-      if (rest === 0) {
-        return;
-      }
-      if (!this.content.hasContent()) {
-        this.moveWithAnimation(0);
-        return;
-      }
-      var dx = (rest > 0 ? 1 : -1) * Math.min(Math.abs(rest), 24);
-      this.move(dx);
-      this.content.redraw();
-      setTimeout(function() {
-        this.moveWithAnimation(rest - dx);
-      }.bind(this));
-    });
   };
 
   Panel.HTML_TEXT = [
@@ -92,18 +75,22 @@
   Panel.Content = (function() {
     var Content = jCore.Component.inherits(function() {
       this.width = this.prop(0);
+      this.offsetWidth = this.prop(0);
       this.height = this.prop(0);
       this.scrollLeft = this.prop(0);
+      this.moveWithAnimation = this.prop(0);
     });
 
-    Content.prototype.hasContent = function() {
-      return dom.hasContent(this.element());
+    Content.prototype.move = function(dx) {
+      var scrollLeft = helper.clamp(this.scrollLeft() - dx, 0, this.width() - this.offsetWidth());
+      this.scrollLeft(scrollLeft);
     };
 
     Content.prototype.load = function(url) {
       return new Promise(function(resolve) {
         dom.once(this.element(), 'load', function() {
           this.width(dom.contentWidth(this.element()));
+          this.offsetWidth(dom.offsetWidth(this.element()));
           this.height(dom.contentHeight(this.element()));
           this.scrollLeft(dom.scrollX(this.element()));
           dom.css(this.element(), { height: this.height() + 'px' });
@@ -116,6 +103,22 @@
     Content.prototype.onredraw = function() {
       this.redrawBy('scrollLeft', function(scrollLeft) {
         dom.scrollTo(this.element(), scrollLeft, 0);
+      });
+
+      this.redrawBy('moveWithAnimation', function(rest) {
+        if (rest === 0) {
+          return;
+        }
+        if (!dom.hasContent(this.element())) {
+          this.moveWithAnimation(0);
+          return;
+        }
+        var dx = (rest > 0 ? 1 : -1) * Math.min(Math.abs(rest), 24);
+        this.move(dx);
+        this.redraw();
+        setTimeout(function() {
+          this.moveWithAnimation(rest - dx);
+        }.bind(this));
       });
     };
 
