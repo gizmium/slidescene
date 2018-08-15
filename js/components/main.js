@@ -13,6 +13,7 @@
 
   Main.prototype.oninit = function() {
     dom.on(this.element(), 'keydown', this.onkeydown.bind(this));
+    dom.on(this.element(), 'wheel', this.onwheel.bind(this));
   };
 
   Main.prototype.onkeydown = (function() {
@@ -37,6 +38,30 @@
     dom.cancel(event);
     this.content.moveDown();
   };
+
+  Main.prototype.onwheel = (function() {
+    var context = {};
+    var dy = 0;
+    var isStart = false;
+    var timeoutID = 0;
+    return function(event) {
+      if (!isStart) {
+        this.content.draggable.onstart(this.content, 0, -1, event, context);
+        isStart = true;
+      }
+      dy -= dom.deltaY(event);
+      this.content.draggable.onmove(this.content, 0, dy, event, context);
+      if (timeoutID) {
+        clearTimeout(timeoutID);
+      }
+      timeoutID = setTimeout(function() {
+        this.content.draggable.onend(this.content, 0, dy, event, context);
+        dy = 0;
+        isStart = false;
+        timeoutID = 0;
+      }.bind(this), 100);
+    };
+  })();
 
   if (typeof module !== 'undefined' && module.exports) {
     module.exports = Main;

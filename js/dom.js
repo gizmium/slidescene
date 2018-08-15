@@ -106,6 +106,10 @@
     return event.which;
   };
 
+  dom.deltaY = function(event) {
+    return event.deltaY;
+  };
+
   dom.ajax = function(opt) {
     var type = opt.type;
     var url = opt.url;
