@@ -12,6 +12,12 @@
     this.draggable = new Content.Draggable(this);
   });
 
+  Content.prototype.hasNextPanel = function(panel) {
+    return this.panels.some(function(next) {
+      return (next.bottom() > panel.bottom());
+    });
+  };
+
   Content.prototype.panelFromTop = function(top) {
     return helper.find(this.panels, function(panel) {
       return (panel.top() <= top && panel.bottom() >= top);
@@ -48,6 +54,24 @@
     this.panels.forEach(function(panel) {
       panel.top(panel.top() + dy);
     });
+  };
+
+  Content.prototype.moveUp = function() {
+    var panel = this.panelFromTop(0);
+    if (!panel) {
+      return;
+    }
+    this.movePanelsWithAnimation(-panel.top());
+  };
+
+  Content.prototype.moveDown = function() {
+    var panel = this.panelFromTop(0);
+    if (!panel) {
+      return;
+    }
+    if (this.hasNextPanel(panel)) {
+      this.movePanelsWithAnimation(-panel.bottom());
+    }
   };
 
   Content.prototype.oninit = function() {
@@ -167,11 +191,8 @@
         }
         return;
       }
-      var hasNext = content.panels.some(function(panel) {
-        return (panel.bottom() > overflowPanel.bottom());
-      });
       var d;
-      if (hasNext) {
+      if (content.hasNextPanel(overflowPanel)) {
         var top = overflowPanel.top();
         var bottom = overflowPanel.bottom();
         if (top <= -24 && bottom >= 24) {

@@ -102,6 +102,10 @@
     event.preventDefault();
   };
 
+  dom.which = function(event) {
+    return event.which;
+  };
+
   dom.ajax = function(opt) {
     var type = opt.type;
     var url = opt.url;
