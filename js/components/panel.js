@@ -38,6 +38,14 @@
     this.content.scrollWithAnimation(dx);
   };
 
+  Panel.prototype.scrollToLeft = function() {
+    this.content.scrollToLeft();
+  };
+
+  Panel.prototype.scrollToRight = function() {
+    this.content.scrollToRight();
+  };
+
   Panel.prototype.load = function() {
     return this.content.load(this.url()).then(function() {
       this.onscroll(this.content.scrollLeft());
@@ -115,6 +123,9 @@
     };
 
     Content.prototype.scrollToLeft = function() {
+      if (this.scrollLeft() <= 0) {
+        return;
+      }
       setTimeout(function() {
         var left = this.scrollLeft() % this.offsetWidth();
         this.scrollWithAnimation(left !== 0 ? left : this.offsetWidth());
@@ -122,6 +133,9 @@
     };
 
     Content.prototype.scrollToRight = function() {
+      if (this.scrollLeft() >= (this.width() - this.offsetWidth())) {
+        return;
+      }
       setTimeout(function() {
         var right = this.offsetWidth() - this.scrollLeft() % this.offsetWidth();
         this.scrollWithAnimation(right !== 0 ? -right : -this.offsetWidth());

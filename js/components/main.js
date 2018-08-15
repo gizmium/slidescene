@@ -18,7 +18,9 @@
 
   Main.prototype.onkeydown = (function() {
     var map = {
+      37: 'left',
       38: 'up',
+      39: 'right',
       40: 'down',
     };
     return function(event) {
@@ -29,9 +31,19 @@
     };
   })();
 
+  Main.prototype.onleft = function(event) {
+    dom.cancel(event);
+    this.content.moveLeft();
+  };
+
   Main.prototype.onup = function(event) {
     dom.cancel(event);
     this.content.moveUp();
+  };
+
+  Main.prototype.onright = function(event) {
+    dom.cancel(event);
+    this.content.moveRight();
   };
 
   Main.prototype.ondown = function(event) {

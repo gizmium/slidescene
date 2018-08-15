@@ -74,6 +74,22 @@
     }
   };
 
+  Content.prototype.moveLeft = function() {
+    var panel = this.panelFromTop(0);
+    if (!panel) {
+      return;
+    }
+    panel.scrollToLeft();
+  };
+
+  Content.prototype.moveRight = function() {
+    var panel = this.panelFromTop(0);
+    if (!panel) {
+      return;
+    }
+    panel.scrollToRight();
+  };
+
   Content.prototype.oninit = function() {
     this.draggable.enable();
   };
