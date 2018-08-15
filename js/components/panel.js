@@ -31,7 +31,7 @@
 
   Panel.prototype.scroll = function(dx) {
     this.content.scroll(dx);
-    this.onscroll(this.content.scrollLeft());
+    this.onscroll();
   };
 
   Panel.prototype.scrollWithAnimation = function(dx) {
@@ -48,7 +48,7 @@
 
   Panel.prototype.load = function() {
     return this.content.load(this.url()).then(function() {
-      this.onscroll(this.content.scrollLeft());
+      this.onscroll();
       return this;
     }.bind(this));
   };
@@ -87,17 +87,21 @@
     });
   };
 
-  Panel.prototype.onscroll = function(scrollLeft) {
-    this.leftButton.disabled(scrollLeft === 0);
-    this.rightButton.disabled(scrollLeft === (this.content.width() - this.content.offsetWidth()));
+  Panel.prototype.onscroll = function() {
+    this.leftButton.disabled(!this.content.canScrollToLeft());
+    this.rightButton.disabled(!this.content.canScrollToRight());
   };
 
   Panel.prototype.onleft = function() {
-    this.content.scrollToLeft();
+    if (this.content.canScrollToLeft()) {
+      this.content.scrollToLeft();
+    }
   };
 
   Panel.prototype.onright = function() {
-    this.content.scrollToRight();
+    if (this.content.canScrollToRight()) {
+      this.content.scrollToRight();
+    }
   };
 
   Panel.HTML_TEXT = [
@@ -117,15 +121,20 @@
       this.scrollWithAnimation = this.prop(0);
     });
 
+    Content.prototype.canScrollToLeft = function() {
+      return (this.scrollLeft() > 0);
+    };
+
+    Content.prototype.canScrollToRight = function() {
+      return (this.scrollLeft() < (this.width() - this.offsetWidth()));
+    };
+
     Content.prototype.scroll = function(dx) {
       var scrollLeft = helper.clamp(this.scrollLeft() - dx, 0, this.width() - this.offsetWidth());
       this.scrollLeft(scrollLeft);
     };
 
     Content.prototype.scrollToLeft = function() {
-      if (this.scrollLeft() <= 0) {
-        return;
-      }
       setTimeout(function() {
         var left = this.scrollLeft() % this.offsetWidth();
         this.scrollWithAnimation(left !== 0 ? left : this.offsetWidth());
@@ -133,9 +142,6 @@
     };
 
     Content.prototype.scrollToRight = function() {
-      if (this.scrollLeft() >= (this.width() - this.offsetWidth())) {
-        return;
-      }
       setTimeout(function() {
         var right = this.offsetWidth() - this.scrollLeft() % this.offsetWidth();
         this.scrollWithAnimation(right !== 0 ? -right : -this.offsetWidth());
@@ -174,7 +180,7 @@
         this.redraw();
         setTimeout(function() {
           this.scrollWithAnimation(rest - dx);
-          this.emit('scroll', this.scrollLeft());
+          this.emit('scroll');
         }.bind(this));
       });
     };
