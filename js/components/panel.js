@@ -31,7 +31,6 @@
 
   Panel.prototype.scroll = function(dx) {
     this.content.scroll(dx);
-    this.onscroll();
   };
 
   Panel.prototype.scrollWithAnimation = function(dx) {
@@ -48,7 +47,6 @@
 
   Panel.prototype.load = function() {
     return this.content.load(this.url()).then(function() {
-      this.onscroll();
       return this;
     }.bind(this));
   };
@@ -132,6 +130,9 @@
     Content.prototype.scroll = function(dx) {
       var scrollLeft = helper.clamp(this.scrollLeft() - dx, 0, this.width() - this.offsetWidth());
       this.scrollLeft(scrollLeft);
+      setTimeout(function() {
+        this.emit('scroll');
+      }.bind(this), 0);
     };
 
     Content.prototype.scrollToLeft = function() {
@@ -155,6 +156,7 @@
           this.offsetWidth(dom.offsetWidth(this.element()));
           this.height(dom.contentHeight(this.element()));
           this.scrollLeft(dom.scrollX(this.element()));
+          this.emit('scroll');
           dom.css(this.element(), { height: this.height() + 'px' });
           return resolve();
         }.bind(this));
