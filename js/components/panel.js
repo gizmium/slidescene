@@ -50,6 +50,14 @@
     }.bind(this));
   };
 
+  Panel.prototype.medal = function() {
+    return this.content.medal();
+  };
+
+  Panel.prototype.next = function() {
+    return this.content.next();
+  };
+
   Panel.prototype.render = function() {
     return dom.render(Panel.HTML_TEXT);
   };
@@ -135,6 +143,21 @@
         return 0;
       }
       return index;
+    };
+
+    Content.prototype.medal = function() {
+      if (!this.module) {
+        return '';
+      }
+      var index = Math.round(this.scrollLeft() / this.offsetWidth());
+      return this.module.medals[index];
+    };
+
+    Content.prototype.next = function() {
+      if (!this.module) {
+        return '';
+      }
+      return this.module.next(this.medal());
     };
 
     Content.prototype.canScrollToLeft = function() {

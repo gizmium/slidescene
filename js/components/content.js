@@ -32,6 +32,18 @@
     return panel.load(props.url, props.medal);
   };
 
+  Content.prototype.loadNextPanel = function(panel) {
+    var next = panel.next();
+    if (!next) {
+      return Promise.resolve();
+    }
+    return this.loadPanel({
+      top: panel.bottom(),
+      url: 'scenes/' + next,
+      medal: panel.medal(),
+    });
+  };
+
   Content.prototype.removePanel = function(panel) {
     panel.parentElement(null);
     helper.remove(this.panels, panel);
