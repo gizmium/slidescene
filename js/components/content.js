@@ -102,7 +102,7 @@
       if (rest === 0) {
         setTimeout(function() {
           this.onanimationend();
-        }.bind(this));
+        }.bind(this), 0);
         return;
       }
       var dy = (rest > 0 ? 1 : -1) * Math.min(Math.abs(rest), 24);
@@ -112,7 +112,7 @@
       });
       setTimeout(function() {
         this.movePanelsWithAnimation(rest - dy);
-      }.bind(this));
+      }.bind(this), 0);
     });
   };
 

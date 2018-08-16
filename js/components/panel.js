@@ -183,7 +183,7 @@
         setTimeout(function() {
           this.scrollWithAnimation(rest - dx);
           this.emit('scroll');
-        }.bind(this));
+        }.bind(this), 0);
       });
     };
 
