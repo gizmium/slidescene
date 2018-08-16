@@ -33,12 +33,15 @@ body {
 }
 
 .panel-content {
+  overflow: hidden;
+}
+
+.panel-content-frame {
   background-color: #fafafa;
   border: 0;
   display: block;
   height: 100%;
   pointer-events: none;
-  width: 624px;
 }
 
 .panel-button {

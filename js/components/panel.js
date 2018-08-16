@@ -109,7 +109,9 @@
 
   Panel.HTML_TEXT = [
     '<div class="panel">',
-      '<iframe class="panel-content" scrolling="no"></iframe>',
+      '<div class="panel-content">',
+        '<iframe class="panel-content-frame" scrolling="no"></iframe>',
+      '</div>',
       '<div class="panel-button-left panel-button"></div>',
       '<div class="panel-button-right panel-button"></div>',
     '</div>',
@@ -123,10 +125,6 @@
       this.scrollLeft = this.prop(0);
       this.scrollWithAnimation = this.prop(0);
     });
-
-    Content.prototype.fragment = function() {
-      return dom.fragment(this.element());
-    };
 
     Content.prototype.canScrollToLeft = function() {
       return (this.scrollLeft() > 0);
@@ -160,31 +158,29 @@
 
     Content.prototype.load = function(url) {
       return new Promise(function(resolve) {
-        dom.once(this.element(), 'load', function() {
-          this.width(dom.contentWidth(this.element()));
+        var frameElement = this.findElement('.panel-content-frame');
+        dom.once(frameElement, 'load', function() {
+          this.width(dom.contentWidth(frameElement));
           this.offsetWidth(dom.offsetWidth(this.element()));
-          this.height(dom.contentHeight(this.element()));
-          this.scrollLeft(dom.scrollX(this.element()));
-          this.emit('scroll');
-          dom.css(this.element(), { height: this.height() + 'px' });
+          this.height(dom.contentHeight(frameElement));
+          dom.css(frameElement, {
+            height: this.height() + 'px',
+            width: this.width() + 'px',
+          });
           return resolve();
         }.bind(this));
-        dom.attr(this.element(), { src: url });
+        dom.attr(frameElement, { src: url });
       }.bind(this));
     };
 
     Content.prototype.onredraw = function() {
       this.redrawBy('scrollLeft', function(scrollLeft) {
-        dom.scrollTo(this.element(), scrollLeft, 0);
+        dom.scrollLeft(this.element(), scrollLeft);
       });
 
       this.redrawBy('scrollWithAnimation', function(rest) {
         if (rest === 0) {
           this.emit('animationend');
-          return;
-        }
-        if (!dom.hasContent(this.element())) {
-          this.scrollWithAnimation(0);
           return;
         }
         var dx = (rest > 0 ? 1 : -1) * Math.min(Math.abs(rest), 24);

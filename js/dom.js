@@ -34,6 +34,14 @@
     }
   };
 
+  dom.offsetWidth = function(el) {
+    return el.offsetWidth;
+  };
+
+  dom.scrollLeft = function(el, value) {
+    el.scrollLeft = value;
+  };
+
   dom.transform = function(el, value) {
     dom.css(el, {
       transform: value,
@@ -45,12 +53,12 @@
     dom.transform(el, 'translateY(' + y + 'px)');
   };
 
-  dom.hasContent = function(iframe) {
-    return !!iframe.contentDocument;
+  dom.contentWindow = function(iframe) {
+    return iframe.contentWindow;
   };
 
-  dom.offsetWidth = function(iframe) {
-    return iframe.contentDocument.documentElement.offsetWidth;
+  dom.hasContent = function(iframe) {
+    return !!iframe.contentDocument;
   };
 
   dom.contentWidth = function(iframe) {
@@ -63,10 +71,6 @@
 
   dom.scrollX = function(iframe) {
     return iframe.contentWindow.scrollX;
-  };
-
-  dom.scrollTo = function(iframe, x, y) {
-    iframe.contentWindow.scrollTo(x, y);
   };
 
   dom.fragment = function(iframe) {
