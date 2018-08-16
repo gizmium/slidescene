@@ -57,24 +57,12 @@
     return iframe.contentWindow;
   };
 
-  dom.hasContent = function(iframe) {
-    return !!iframe.contentDocument;
-  };
-
   dom.contentWidth = function(iframe) {
     return iframe.contentDocument.documentElement.scrollWidth;
   };
 
   dom.contentHeight = function(iframe) {
     return iframe.contentDocument.documentElement.scrollHeight;
-  };
-
-  dom.scrollX = function(iframe) {
-    return iframe.contentWindow.scrollX;
-  };
-
-  dom.fragment = function(iframe) {
-    return iframe.contentWindow.location.hash.substring(1);
   };
 
   dom.on = function(el, type, listener, useCapture) {
