@@ -57,6 +57,7 @@
 
   Panel.prototype.onappend = function() {
     this.content.on('scroll', this.onscroll.bind(this));
+    this.content.on('fragment', this.onfragment.bind(this));
     this.leftButton.on('tap', this.onleft.bind(this));
     this.rightButton.on('tap', this.onright.bind(this));
   };
@@ -90,6 +91,10 @@
     this.rightButton.disabled(!this.content.canScrollToRight());
   };
 
+  Panel.prototype.onfragment = function(fragment) {
+    this.emit('fragment', fragment);
+  };
+
   Panel.prototype.onleft = function() {
     if (this.content.canScrollToLeft()) {
       this.content.scrollToLeft();
@@ -117,6 +122,7 @@
       this.height = this.prop(0);
       this.scrollLeft = this.prop(0);
       this.scrollWithAnimation = this.prop(0);
+      this.fragment = this.prop('');
     });
 
     Content.prototype.canScrollToLeft = function() {
@@ -157,6 +163,7 @@
           this.height(dom.contentHeight(this.element()));
           this.scrollLeft(dom.scrollX(this.element()));
           this.emit('scroll');
+          this.fragment(dom.fragment(this.element()));
           dom.css(this.element(), { height: this.height() + 'px' });
           return resolve();
         }.bind(this));
@@ -171,6 +178,11 @@
 
       this.redrawBy('scrollWithAnimation', function(rest) {
         if (rest === 0) {
+          var fragment = dom.fragment(this.element());
+          if (fragment !== this.fragment()) {
+            this.fragment(fragment);
+            this.emit('fragment', fragment);
+          }
           return;
         }
         if (!dom.hasContent(this.element())) {

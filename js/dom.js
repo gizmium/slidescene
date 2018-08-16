@@ -69,6 +69,10 @@
     iframe.contentWindow.scrollTo(x, y);
   };
 
+  dom.fragment = function(iframe) {
+    return iframe.contentWindow.location.hash.substring(1);
+  };
+
   dom.on = function(el, type, listener, useCapture) {
     el.addEventListener(type, listener, !!useCapture);
   };
