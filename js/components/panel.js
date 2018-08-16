@@ -7,7 +7,6 @@
   var Button = app.Button || require('./button.js');
 
   var Panel = jCore.Component.inherits(function(props) {
-    this.url = this.prop(props.url);
     this.top = this.prop(props.top);
     this.visible = this.prop(false);
     this.paddingTop = this.prop(12);
@@ -45,8 +44,8 @@
     this.content.scrollToRight();
   };
 
-  Panel.prototype.load = function() {
-    return this.content.load(this.url()).then(function() {
+  Panel.prototype.load = function(url, medal) {
+    return this.content.load(url, medal).then(function() {
       return this;
     }.bind(this));
   };
@@ -124,7 +123,19 @@
       this.height = this.prop(0);
       this.scrollLeft = this.prop(0);
       this.scrollWithAnimation = this.prop(0);
+      this.module = null;
     });
+
+    Content.prototype.medalIndex = function(medal) {
+      if (!this.module) {
+        return 0;
+      }
+      var index = this.module.medals.indexOf(medal);
+      if (index === -1) {
+        return 0;
+      }
+      return index;
+    };
 
     Content.prototype.canScrollToLeft = function() {
       return (this.scrollLeft() > 0);
@@ -156,13 +167,16 @@
       }.bind(this), 0);
     };
 
-    Content.prototype.load = function(url) {
+    Content.prototype.load = function(url, medal) {
       return new Promise(function(resolve) {
         var frameElement = this.findElement('.panel-content-frame');
         dom.once(frameElement, 'load', function() {
           this.width(dom.contentWidth(frameElement));
           this.offsetWidth(dom.offsetWidth(this.element()));
           this.height(dom.contentHeight(frameElement));
+          this.module = dom.contentWindow(frameElement).module;
+          this.scrollLeft(this.medalIndex(medal) * this.offsetWidth());
+          this.emit('scroll');
           dom.css(frameElement, {
             height: this.height() + 'px',
             width: this.width() + 'px',

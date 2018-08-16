@@ -25,11 +25,11 @@
   };
 
   Content.prototype.loadPanel = function(props) {
-    var panel = new Panel(props);
+    var panel = new Panel({ top: props.top });
     panel.parentElement(this.element());
     panel.redraw();
     this.panels.push(panel);
-    return panel.load();
+    return panel.load(props.url, props.medal);
   };
 
   Content.prototype.removePanel = function(panel) {
