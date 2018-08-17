@@ -25,7 +25,10 @@
   };
 
   Content.prototype.loadPanel = function(props) {
-    var panel = new Panel({ top: props.top });
+    var panel = new Panel({
+      top: props.top,
+      previous: props.previous,
+    });
     panel.parentElement(this.element());
     panel.redraw();
     this.panels.push(panel);
@@ -39,6 +42,7 @@
     }
     return this.loadPanel({
       top: panel.bottom(),
+      previous: panel,
       url: 'scenes/' + next,
       medal: panel.medal(),
     });
