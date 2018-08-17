@@ -58,7 +58,7 @@
       return;
     }
     var minTop = this.panels.reduce(function(top, panel) {
-      return Math.min(top, panel.top());
+      return (panel.visible() ? Math.min(top, panel.top()) : top);
     }, Number.MAX_VALUE);
     if (minTop + dy > 0) {
       // don't show an area above the top panel
@@ -207,19 +207,14 @@
 
     Draggable.prototype.onendy = function(content, dx, dy, event, context) {
       // find that a part of the panel located on the out of the window
-      var overflowPanel = helper.find(content.panels, function(panel) {
-        return (panel.top() * panel.bottom() < 0 && panel.visible());
-      });
+      var overflowPanel = content.panelFromTop(0);
       if (!overflowPanel) {
         var maxTop = content.panels.reduce(function(top, panel) {
-          return Math.max(top, panel.top());
+          return (panel.visible() ? Math.max(top, panel.top()) : top);
         }, -Number.MAX_VALUE);
         if (maxTop < 0) {
           // all panels are located on the out of the window
           content.movePanelsWithAnimation(-maxTop);
-        } else {
-          // XXX: no need to move panels but handle 'animationend' event
-          content.onanimationend();
         }
         return;
       }
@@ -237,6 +232,10 @@
         d = -overflowPanel.top();
       }
       content.movePanelsWithAnimation(d);
+      if (d === 0) {
+        // XXX: no need to move panels but handle 'animationend' event
+        content.onanimationend();
+      }
     };
 
     Draggable.prototype.onendx = function(content, dx, dy, event, context) {
