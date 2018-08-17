@@ -38,6 +38,10 @@
     return el.offsetWidth;
   };
 
+  dom.offsetHeight = function(el) {
+    return el.offsetHeight;
+  };
+
   dom.scrollLeft = function(el, value) {
     el.scrollLeft = value;
   };

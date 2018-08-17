@@ -17,8 +17,12 @@
     this.previous = props.previous;
   });
 
+  Panel.prototype.height = function() {
+    return this.paddingTop() + this.content.height() + this.paddingBottom();
+  };
+
   Panel.prototype.bottom = function() {
-    return this.top() + this.paddingTop() + this.content.height() + this.paddingBottom();
+    return this.top() + this.height();
   };
 
   Panel.prototype.left = function() {

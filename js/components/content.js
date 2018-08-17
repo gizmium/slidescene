@@ -48,8 +48,30 @@
       top: panel.bottom(),
       previous: panel,
       url: 'scenes/' + next,
-      medal: panel.medal(),
+      medal: this.medal(),
     });
+  };
+
+  Content.prototype.loadNewPanel = function() {
+    var visiblePanels = this.panels.filter(function(panel) {
+      return panel.visible();
+    }).sort(function(a, b) {
+      return a.bottom() - b.bottom();
+    });
+    if (visiblePanels.length === 0) {
+      return Promise.resolve();
+    }
+    var first = visiblePanels[0];
+    var last = visiblePanels[visiblePanels.length - 1];
+    if (last.bottom() > dom.offsetHeight(this.element()) + first.height()) {
+      return Promise.resolve();
+    }
+    return this.loadNextPanel(last).then(function(panel) {
+      if (panel && panel.medal() === this.medal()) {
+        panel.visible(true);
+        return this.loadNewPanel();
+      }
+    }.bind(this));
   };
 
   Content.prototype.removePanel = function(panel) {
@@ -144,6 +166,8 @@
         this.removePanel(panel);
       }
     }.bind(this));
+
+    this.loadNewPanel();
   };
 
   Content.prototype.onpanelanimationend = function(panel) {
