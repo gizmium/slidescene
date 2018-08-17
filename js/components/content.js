@@ -7,6 +7,7 @@
   var Panel = app.Panel || require('./panel.js');
 
   var Content = jCore.Component.inherits(function() {
+    this.medal = this.prop('');
     this.movePanelsWithAnimation = this.prop(0);
     this.panels = [];
     this.draggable = new Content.Draggable(this);
@@ -32,7 +33,10 @@
     panel.parentElement(this.element());
     panel.redraw();
     this.panels.push(panel);
-    return panel.load(props.url, props.medal);
+    return panel.load(props.url, props.medal).then(function(panel) {
+      panel.on('animationend', this.onpanelanimationend.bind(this));
+      return panel;
+    }.bind(this));
   };
 
   Content.prototype.loadNextPanel = function(panel) {
@@ -49,6 +53,7 @@
   };
 
   Content.prototype.removePanel = function(panel) {
+    panel.removeAllListeners();
     panel.parentElement(null);
     helper.remove(this.panels, panel);
   };
@@ -139,6 +144,10 @@
         this.removePanel(panel);
       }
     }.bind(this));
+  };
+
+  Content.prototype.onpanelanimationend = function(panel) {
+    this.medal(panel.medal());
   };
 
   Content.Draggable = (function() {

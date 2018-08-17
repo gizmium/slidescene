@@ -47,7 +47,6 @@
 
   Panel.prototype.load = function(url, medal) {
     return this.content.load(url, medal).then(function() {
-      this.markDirty();
       return this;
     }.bind(this));
   };
@@ -101,7 +100,7 @@
   };
 
   Panel.prototype.onanimationend = function() {
-    this.emit('animationend');
+    this.emit('animationend', this);
   };
 
   Panel.prototype.onleft = function() {
@@ -206,6 +205,7 @@
             height: this.height() + 'px',
             width: this.width() + 'px',
           });
+          this.redraw();
           return resolve();
         }.bind(this));
         dom.attr(frameElement, { src: url });
