@@ -10,6 +10,7 @@
     this.top = this.prop(props.top);
     this.paddingTop = this.prop(12);
     this.paddingBottom = this.prop(12);
+    this.visible = this.prop(false);
     this.content = new Panel.Content({ element: this.findElement('.panel-content') });
     this.leftButton = new Button({ element: this.findElement('.panel-button-left') });
     this.rightButton = new Button({ element: this.findElement('.panel-button-right') });
@@ -26,10 +27,6 @@
 
   Panel.prototype.right = function() {
     return this.left() + this.content.offsetWidth();
-  };
-
-  Panel.prototype.visible = function() {
-    return (!!this.previous && this.previous.visible() && this.medal() === this.previous.medal());
   };
 
   Panel.prototype.scroll = function(dx) {
@@ -50,9 +47,6 @@
 
   Panel.prototype.load = function(url, medal) {
     return this.content.load(url, medal).then(function() {
-      if (!this.previous) {
-        this.previous = new Panel.Dummy(this);
-      }
       this.markDirty();
       return this;
     }.bind(this));
@@ -239,22 +233,6 @@
     };
 
     return Content;
-  })();
-
-  Panel.Dummy = (function() {
-    var Dummy = function(panel) {
-      this.panel = panel;
-    };
-
-    Dummy.prototype.visible = function() {
-      return true;
-    };
-
-    Dummy.prototype.medal = function() {
-      return this.panel.medal();
-    };
-
-    return Dummy;
   })();
 
   if (typeof module !== 'undefined' && module.exports) {

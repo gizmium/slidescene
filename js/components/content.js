@@ -12,9 +12,9 @@
     this.draggable = new Content.Draggable(this);
   });
 
-  Content.prototype.hasNextPanel = function(panel) {
+  Content.prototype.hasNextVisiblePanel = function(panel) {
     return this.panels.some(function(next) {
-      return (next.bottom() > panel.bottom() && next.visible());
+      return (next.previous === panel && next.visible());
     });
   };
 
@@ -85,7 +85,7 @@
     if (!panel) {
       return;
     }
-    if (this.hasNextPanel(panel)) {
+    if (this.hasNextVisiblePanel(panel)) {
       this.movePanelsWithAnimation(-panel.bottom());
     }
   };
@@ -219,7 +219,7 @@
         return;
       }
       var d;
-      if (content.hasNextPanel(overflowPanel)) {
+      if (content.hasNextVisiblePanel(overflowPanel)) {
         var top = overflowPanel.top();
         var bottom = overflowPanel.bottom();
         if (top <= -24 && bottom >= 24) {
