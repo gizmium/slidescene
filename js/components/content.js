@@ -13,6 +13,14 @@
     this.draggable = new Content.Draggable(this);
   });
 
+  Content.prototype.visiblePanels = function() {
+    return this.panels.filter(function(panel) {
+      return panel.visible();
+    }).sort(function(a, b) {
+      return a.bottom() - b.bottom();
+    });
+  };
+
   Content.prototype.hasNextVisiblePanel = function(panel) {
     return this.panels.some(function(next) {
       return (next.previous === panel && next.visible());
@@ -53,11 +61,7 @@
   };
 
   Content.prototype.loadNewPanel = function() {
-    var visiblePanels = this.panels.filter(function(panel) {
-      return panel.visible();
-    }).sort(function(a, b) {
-      return a.bottom() - b.bottom();
-    });
+    var visiblePanels = this.visiblePanels();
     if (visiblePanels.length === 0) {
       return Promise.resolve();
     }
@@ -72,6 +76,17 @@
         return this.loadNewPanel();
       }
     }.bind(this));
+  };
+
+  Content.prototype.showPanel = function(panel) {
+    panel.visible(true);
+    panel.redraw();
+    var nextPanel = this.panels.filter(function(next) {
+      return (next.previous === panel && next.medal() === panel.medal());
+    })[0];
+    if (nextPanel) {
+      this.showPanel(nextPanel);
+    }
   };
 
   Content.prototype.removePanel = function(panel) {
@@ -171,7 +186,23 @@
   };
 
   Content.prototype.onpanelanimationend = function(panel) {
+    if (this.panels.indexOf(panel) === -1 || !panel.visible()) {
+      // already removed or invisible
+      return;
+    }
+
     this.medal(panel.medal());
+
+    // hide next panels
+    var visiblePanels = this.visiblePanels();
+    visiblePanels.slice(visiblePanels.indexOf(panel) + 1).forEach(function(panel) {
+      panel.visible(false);
+      panel.redraw();
+    });
+
+    // show next panels
+    this.showPanel(panel);
+    this.loadNewPanel();
   };
 
   Content.Draggable = (function() {
