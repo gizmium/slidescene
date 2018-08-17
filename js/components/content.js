@@ -14,13 +14,13 @@
 
   Content.prototype.hasNextPanel = function(panel) {
     return this.panels.some(function(next) {
-      return (next.bottom() > panel.bottom());
+      return (next.bottom() > panel.bottom() && next.visible());
     });
   };
 
   Content.prototype.panelFromTop = function(top) {
     return helper.find(this.panels, function(panel) {
-      return (panel.top() <= top && panel.bottom() >= top);
+      return (panel.top() <= top && panel.bottom() >= top && panel.visible());
     });
   };
 
@@ -204,7 +204,7 @@
     Draggable.prototype.onendy = function(content, dx, dy, event, context) {
       // find that a part of the panel located on the out of the window
       var overflowPanel = helper.find(content.panels, function(panel) {
-        return (panel.top() * panel.bottom() < 0);
+        return (panel.top() * panel.bottom() < 0 && panel.visible());
       });
       if (!overflowPanel) {
         var maxTop = content.panels.reduce(function(top, panel) {
