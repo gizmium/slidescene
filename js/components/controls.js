@@ -8,6 +8,10 @@
     this.medal = new Medal({ element: this.findElement('.medal') });
   });
 
+  Controls.prototype.changeMedal = function(name) {
+    return this.medal.change(name);
+  };
+
   if (typeof module !== 'undefined' && module.exports) {
     module.exports = Controls;
   } else {

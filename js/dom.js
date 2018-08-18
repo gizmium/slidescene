@@ -13,6 +13,14 @@
     return el;
   };
 
+  dom.children = function(el) {
+    return Array.prototype.slice.call(el.children);
+  };
+
+  dom.append = function(parent, child) {
+    parent.appendChild(child);
+  };
+
   dom.attr = function(el, props) {
     Object.keys(props).forEach(function(key) {
       el.setAttribute(key, props[key]);

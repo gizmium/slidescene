@@ -14,6 +14,7 @@
   Main.prototype.oninit = function() {
     dom.on(this.element(), 'keydown', this.onkeydown.bind(this));
     dom.on(this.element(), 'wheel', this.onwheel.bind(this));
+    this.content.on('medal', this.onmedal.bind(this));
   };
 
   Main.prototype.onkeydown = (function() {
@@ -74,6 +75,10 @@
       }.bind(this), 100);
     };
   })();
+
+  Main.prototype.onmedal = function(medal) {
+    this.controls.changeMedal(medal);
+  };
 
   if (typeof module !== 'undefined' && module.exports) {
     module.exports = Main;

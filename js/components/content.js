@@ -192,6 +192,9 @@
     }
 
     this.medal(panel.medal());
+    setTimeout(function() {
+      this.emit('medal', this.medal());
+    }.bind(this), 0);
 
     // hide next panels
     var visiblePanels = this.visiblePanels();
