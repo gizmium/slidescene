@@ -219,6 +219,7 @@
     Content.prototype.onredraw = function() {
       this.redrawBy('scrollLeft', function(scrollLeft) {
         dom.scrollLeft(this.element(), scrollLeft);
+        this.onscroll(scrollLeft);
       });
 
       this.redrawBy('scrollWithAnimation', function(rest) {
@@ -234,6 +235,12 @@
           this.emit('scroll');
         }.bind(this), 0);
       });
+    };
+
+    Content.prototype.onscroll = function(scrollLeft) {
+      if (this.module) {
+        this.module.onscroll(scrollLeft);
+      }
     };
 
     return Content;
