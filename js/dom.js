@@ -42,6 +42,10 @@
     }
   };
 
+  dom.data = function(el, key, value) {
+    el.dataset[key] = value;
+  };
+
   dom.offsetWidth = function(el) {
     return el.offsetWidth;
   };
