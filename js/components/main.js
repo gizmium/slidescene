@@ -127,7 +127,7 @@
         }
         return new Promise(function(resolve) {
           this.howl = new howler.Howl({
-            src: ['sounds/' + name],
+            src: ['sounds/' + name + '.mp3'],
             loop: true,
           });
           resolve();

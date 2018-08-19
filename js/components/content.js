@@ -72,7 +72,7 @@
     return this.loadPanel({
       top: panel.bottom(),
       previous: panel,
-      url: 'scenes/' + next,
+      url: 'scenes/' + next + '.html',
       medal: this.medal(),
     });
   };
