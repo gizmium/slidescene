@@ -319,6 +319,10 @@
         d = (-left < right ? -left : -right);
       }
       panel.scrollWithAnimation(d);
+      if (d === 0) {
+        // XXX: no need to scroll panel but handle 'animationend' event
+        content.onpanelanimationend(panel);
+      }
     };
 
     return Draggable;
