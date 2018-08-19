@@ -1,12 +1,14 @@
 (function(app) {
   'use strict';
 
+  var howler = require('howler');
   var jCore = require('jcore');
   var dom = app.dom || require('../dom.js');
   var Content = app.Content || require('./content.js');
   var Controls = app.Controls || require('./controls.js');
 
   var Main = jCore.Component.inherits(function() {
+    this.sound = new Main.Sound();
     this.content = new Content({ element: this.findElement('.content') });
     this.controls = new Controls({ element: this.findElement('.controls') });
   });
@@ -15,6 +17,10 @@
     dom.on(this.element(), 'keydown', this.onkeydown.bind(this));
     dom.on(this.element(), 'wheel', this.onwheel.bind(this));
     this.content.on('medal', this.onmedal.bind(this));
+    this.content.on('sound', this.onsound.bind(this));
+    this.controls.on('mute', this.onmute.bind(this));
+    this.controls.on('unmute', this.onunmute.bind(this));
+    this.sound.mute();
   };
 
   Main.prototype.onkeydown = (function() {
@@ -79,6 +85,76 @@
   Main.prototype.onmedal = function(medal) {
     this.controls.changeMedal(medal);
   };
+
+  Main.prototype.onsound = function(sound) {
+    this.sound.load(sound).then(function() {
+      this.sound.play();
+    }.bind(this));
+  };
+
+  Main.prototype.onmute = function() {
+    this.sound.mute();
+  };
+
+  Main.prototype.onunmute = function() {
+    this.sound.unmute();
+  };
+
+  Main.Sound = (function() {
+    var Sound = function() {
+      this.name = '';
+      this.howl = null;
+    };
+
+    Sound.prototype.load = function(name) {
+      if (this.name === name) {
+        return Promise.resolve();
+      }
+      this.name = name;
+      return new Promise(function(resolve) {
+        if (!this.howl) {
+          return resolve();
+        }
+        this.howl.once('fade', function(){
+          this.howl.unload();
+          this.howl = null;
+          resolve();
+        }.bind(this));
+        this.howl.fade(1, 0, 1000);
+      }.bind(this)).then(function() {
+        if (!name) {
+          return Promise.resolve();
+        }
+        return new Promise(function(resolve) {
+          this.howl = new howler.Howl({
+            src: ['sounds/' + name],
+            loop: true,
+          });
+          resolve();
+        }.bind(this));
+      }.bind(this));
+    };
+
+    Sound.prototype.play = function() {
+      if (!this.howl || this.howl.playing()) {
+        return Promise.resolve();
+      }
+      return new Promise(function(resolve) {
+        this.howl.play();
+        resolve();
+      }.bind(this));
+    };
+
+    Sound.prototype.mute = function() {
+      howler.Howler.mute(true);
+    };
+
+    Sound.prototype.unmute = function() {
+      howler.Howler.mute(false);
+    };
+
+    return Sound;
+  })();
 
   if (typeof module !== 'undefined' && module.exports) {
     module.exports = Main;

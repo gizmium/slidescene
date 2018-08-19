@@ -63,6 +63,10 @@
     return this.content.next();
   };
 
+  Panel.prototype.sound = function() {
+    return this.content.sound();
+  };
+
   Panel.prototype.render = function() {
     return dom.render(Panel.HTML_TEXT);
   };
@@ -163,6 +167,13 @@
         return '';
       }
       return this.module.next(this.medal());
+    };
+
+    Content.prototype.sound = function() {
+      if (!this.module) {
+        return '';
+      }
+      return this.module.sound;
     };
 
     Content.prototype.canScrollToLeft = function() {

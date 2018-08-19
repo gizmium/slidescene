@@ -8,6 +8,7 @@
 
   var Content = jCore.Component.inherits(function() {
     this.medal = this.prop('');
+    this.sound = this.prop('');
     this.movePanelsWithAnimation = this.prop(0);
     this.panels = [];
     this.draggable = new Content.Draggable(this);
@@ -182,7 +183,9 @@
       }
     }.bind(this));
 
-    this.loadNewPanel();
+    this.loadNewPanel().then(function() {
+      this.onsound();
+    }.bind(this));
   };
 
   Content.prototype.onpanelanimationend = function(panel) {
@@ -206,6 +209,19 @@
     // show next panels
     this.showPanel(panel);
     this.loadNewPanel();
+  };
+
+  Content.prototype.onsound = function() {
+    var visiblePanels = this.visiblePanels();
+    if (visiblePanels.length === 0) {
+      return;
+    }
+    var sound = visiblePanels[0].sound();
+    if (sound === this.sound()) {
+      return;
+    }
+    this.sound(sound);
+    this.emit('sound', sound);
   };
 
   Content.Draggable = (function() {
