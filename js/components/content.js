@@ -34,6 +34,22 @@
     });
   };
 
+  Content.prototype.load = function(url, medal) {
+    this.medal(medal);
+    this.emit('medal', this.medal());
+    this.loadPanel({
+      top: 0,
+      url: url,
+      medal: medal,
+    }).then(function(p) {
+      p.visible(true);
+      return this.loadNewPanel();
+    }.bind(this)).then(function() {
+      this.onsound();
+      this.on('animationend', this.onanimationend.bind(this));
+    }.bind(this));
+  };
+
   Content.prototype.loadPanel = function(props) {
     var panel = new Panel({
       top: props.top,
@@ -160,7 +176,7 @@
       }
       if (rest === 0) {
         setTimeout(function() {
-          this.onanimationend();
+          this.emit('animationend');
         }.bind(this), 0);
         return;
       }
