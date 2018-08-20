@@ -5,17 +5,17 @@
   var dom = app.dom || require('../dom.js');
 
   var Medal = jCore.Component.inherits(function() {
-    this.name = '';
+    this.name = this.prop('');
   });
 
   Medal.prototype.change = function(name) {
-    if (this.name === name) {
+    if (name === this.name()) {
       return Promise.resolve();
     }
-    this.name = name;
+    this.name(name);
     return new Promise(function(resolve) {
       var children = dom.children(this.element());
-      var src = 'images/medals/' + name + '.svg';
+      var src = 'images/medals/' + this.name() + '.svg';
       var onfailed = function() {
         src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYWH5DwABKAEMOPUkGQAAAABJRU5ErkJggg==';
         dom.attr(children[0], { src: src });
