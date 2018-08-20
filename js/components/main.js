@@ -25,38 +25,19 @@
 
   Main.prototype.onkeydown = (function() {
     var map = {
-      37: 'left',
-      38: 'up',
-      39: 'right',
-      40: 'down',
+      37: 'moveLeft',
+      38: 'moveUp',
+      39: 'moveRight',
+      40: 'moveDown',
     };
     return function(event) {
       var key = map[dom.which(event)];
       if (key) {
-        this['on' + key](event);
+        dom.cancel(event);
+        this.content[key]();
       }
     };
   })();
-
-  Main.prototype.onleft = function(event) {
-    dom.cancel(event);
-    this.content.moveLeft();
-  };
-
-  Main.prototype.onup = function(event) {
-    dom.cancel(event);
-    this.content.moveUp();
-  };
-
-  Main.prototype.onright = function(event) {
-    dom.cancel(event);
-    this.content.moveRight();
-  };
-
-  Main.prototype.ondown = function(event) {
-    dom.cancel(event);
-    this.content.moveDown();
-  };
 
   Main.prototype.onwheel = (function() {
     var context = {};
