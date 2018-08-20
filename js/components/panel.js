@@ -166,7 +166,7 @@
       if (!this.module) {
         return '';
       }
-      return this.module.next(this.medal());
+      return this.module.nexts[this.medalIndex(this.medal())];
     };
 
     Content.prototype.sound = function() {
