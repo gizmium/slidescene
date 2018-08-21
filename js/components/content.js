@@ -10,6 +10,7 @@
     this.medal = this.prop('');
     this.sound = this.prop('');
     this.movePanelsWithAnimation = this.prop(0);
+    this.isLoading = this.prop(false);
     this.panels = [];
     this.draggable = new Content.Draggable(this);
   });
@@ -43,7 +44,7 @@
       medal: medal,
     }).then(function(p) {
       p.visible(true);
-      return this.loadNewPanel();
+      return this.loadNewPanels();
     }.bind(this)).then(function() {
       this.onsound();
       this.on('animationend', this.onanimationend.bind(this));
@@ -92,6 +93,16 @@
         panel.visible(true);
         return this.loadNewPanel();
       }
+    }.bind(this));
+  };
+
+  Content.prototype.loadNewPanels = function() {
+    if (this.isLoading()) {
+      return Promise.resolve();
+    }
+    this.isLoading(true);
+    return this.loadNewPanel().then(function() {
+      this.isLoading(false);
     }.bind(this));
   };
 
@@ -199,7 +210,7 @@
       }
     }.bind(this));
 
-    this.loadNewPanel().then(function() {
+    this.loadNewPanels().then(function() {
       this.onsound();
     }.bind(this));
   };
@@ -224,7 +235,7 @@
 
     // show next panels
     this.showPanel(panel);
-    this.loadNewPanel();
+    this.loadNewPanels();
   };
 
   Content.prototype.onsound = function() {
