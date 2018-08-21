@@ -15,7 +15,7 @@
     this.name(name);
     return new Promise(function(resolve) {
       var children = dom.children(this.element());
-      var src = 'images/medals/' + this.name() + '.svg';
+      var src = 'medals/' + this.name() + '.svg';
       var onfailed = function() {
         src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYWH5DwABKAEMOPUkGQAAAABJRU5ErkJggg==';
         dom.attr(children[0], { src: src });
