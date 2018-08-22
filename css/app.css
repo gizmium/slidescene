@@ -139,14 +139,9 @@ body {
 .button-icon {
   box-sizing: border-box;
   height: 100%;
-  pointer-events: none;
-  vertical-align: top;
-  width: 100%;
-}
-
-.button-icon-mute,
-.button-icon-unmute {
   padding: 4px;
+  pointer-events: none;
+  width: 100%;
 }
 
 .mute-button[data-state='mute'] > .button-icon-unmute {
