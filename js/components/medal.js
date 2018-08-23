@@ -17,7 +17,7 @@
       var children = dom.children(this.element());
       var src = 'medals/' + this.name() + '.svg';
       var onfailed = function() {
-        src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYWH5DwABKAEMOPUkGQAAAABJRU5ErkJggg==';
+        src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg==';
         dom.attr(children[0], { src: src });
       };
       dom.once(children[0], 'load', function() {
