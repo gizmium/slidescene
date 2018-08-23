@@ -29,19 +29,13 @@
           dom.css(this.element(), { 'background-image': 'url("' + src + '")' });
           resolve();
         }.bind(this));
-        dom.css(children[0], { opacity: 1 });
-        dom.css(children[1], { opacity: 0 });
+        dom.toggleClass(children[0], 'hide', false);
+        dom.toggleClass(children[1], 'hide', true);
       }.bind(this));
       dom.on(children[0], 'error', onfailed);
       dom.on(children[0], 'abort', onfailed);
       dom.attr(children[0], { src: src });
     }.bind(this));
-  };
-
-  Medal.prototype.oninit = function() {
-    var children = dom.children(this.element());
-    dom.css(children[0], { opacity: 0 });
-    dom.css(children[1], { opacity: 1 });
   };
 
   if (typeof module !== 'undefined' && module.exports) {

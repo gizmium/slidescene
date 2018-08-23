@@ -110,6 +110,10 @@ body {
   width: 100%;
 }
 
+.medal-item.hide {
+  opacity: 0;
+}
+
 .button {
   background-color: #fafafa;
   border: 1px solid #bdbdbd;
