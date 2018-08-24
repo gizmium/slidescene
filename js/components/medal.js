@@ -13,9 +13,10 @@
       return Promise.resolve();
     }
     this.name(name);
-    return new Promise(function(resolve) {
+    return new Promise(function(resolve, reject) {
       var children = dom.children(this.element());
-      var src = 'medals/' + this.name() + '.svg';
+      var name = this.name();
+      var src = 'medals/' + name + '.svg';
       var onfailed = function() {
         src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg==';
         dom.attr(children[0], { src: src });
@@ -23,7 +24,15 @@
       dom.once(children[0], 'load', function() {
         dom.off(children[0], 'error', onfailed);
         dom.off(children[0], 'abort', onfailed);
+        if (name !== this.name()) {
+          reject();
+          return;
+        }
         dom.once(this.element(), 'transitionend', function() {
+          if (name !== this.name()) {
+            reject();
+            return;
+          }
           dom.append(this.element(), children[0]);
           dom.attr(children[1], { src: src });
           dom.css(this.element(), { 'background-image': 'url("' + src + '")' });
