@@ -8,7 +8,7 @@
     this.name = this.prop('');
   });
 
-  Medal.prototype.change = function(name) {
+  Medal.prototype.load = function(name) {
     if (name === this.name()) {
       return Promise.resolve();
     }

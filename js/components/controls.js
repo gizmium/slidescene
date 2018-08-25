@@ -10,8 +10,8 @@
     this.muteButton = new MuteButton({ element: this.findElement('.mute-button') });
   });
 
-  Controls.prototype.changeMedal = function(name) {
-    return this.medal.change(name);
+  Controls.prototype.loadMedal = function(name) {
+    return this.medal.load(name);
   };
 
   Controls.prototype.oninit = function() {
