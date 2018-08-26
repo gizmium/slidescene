@@ -20,7 +20,6 @@
     this.content.on('sound', this.onsound.bind(this));
     this.controls.on('mute', this.onmute.bind(this));
     this.controls.on('unmute', this.onunmute.bind(this));
-    this.sound.mute();
   };
 
   Main.prototype.onkeydown = (function() {
@@ -85,6 +84,7 @@
     var Sound = function() {
       this.name = '';
       this.howl = null;
+      this.muted = true;
     };
 
     Sound.prototype.load = function(name) {
@@ -110,6 +110,7 @@
           this.howl = new howler.Howl({
             src: ['sounds/' + name + '.mp3'],
             loop: true,
+            mute: this.muted,
           });
           resolve();
         }.bind(this));
@@ -127,11 +128,17 @@
     };
 
     Sound.prototype.mute = function() {
-      howler.Howler.mute(true);
+      this.muted = true;
+      if (this.howl) {
+        this.howl.mute(true);
+      }
     };
 
     Sound.prototype.unmute = function() {
-      howler.Howler.mute(false);
+      this.muted = false;
+      if (this.howl) {
+        this.howl.mute(false);
+      }
     };
 
     return Sound;
