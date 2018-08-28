@@ -25,13 +25,11 @@
         dom.off(children[0], 'error', onfailed);
         dom.off(children[0], 'abort', onfailed);
         if (name !== this.name()) {
-          reject();
-          return;
+          return reject();
         }
         dom.once(this.element(), 'transitionend', function() {
           if (name !== this.name()) {
-            reject();
-            return;
+            return reject();
           }
           dom.append(this.element(), children[0]);
           dom.attr(children[1], { src: src });
