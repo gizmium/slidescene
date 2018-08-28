@@ -221,7 +221,7 @@
             width: this.width() + 'px',
           });
           this.redraw();
-          return resolve();
+          resolve();
         }.bind(this));
         dom.attr(frameElement, { src: url });
       }.bind(this));
