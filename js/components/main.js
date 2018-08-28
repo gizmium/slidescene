@@ -92,19 +92,29 @@
         return Promise.resolve();
       }
       this.name = name;
-      return new Promise(function(resolve) {
-        if (!this.howl) {
+      return new Promise(function(resolve, reject) {
+        var howl = this.howl;
+        if (!howl) {
           return resolve();
         }
-        this.howl.once('fade', function(){
-          this.howl.unload();
+        if (name !== this.name) {
+          return reject();
+        }
+        howl.once('fade', function(){
+          if (howl !== this.howl) {
+            return reject();
+          }
+          howl.unload();
           this.howl = null;
           resolve();
         }.bind(this));
-        this.howl.fade(1, 0, 1000);
+        howl.fade(1, 0, 1000);
       }.bind(this)).then(function() {
         if (!name) {
           return Promise.resolve();
+        }
+        if (name !== this.name) {
+          return Promise.reject();
         }
         return new Promise(function(resolve) {
           this.howl = new howler.Howl({
