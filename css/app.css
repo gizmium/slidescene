@@ -53,6 +53,13 @@ body {
   width: 100%;
 }
 
+@media screen\0 {
+  .panel-content-frame {
+    display: inline-block;
+    vertical-align: middle;
+  }
+}
+
 .panel-button {
   background-color: #212121;
   background-position: center;
