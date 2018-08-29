@@ -7,7 +7,7 @@
   },
   "dependencies": {
     "es6-promise": "^4.2.4",
-    "howler": "^2.0.14",
+    "howler": "^2.0.10",
     "jcore": "^0.3.0"
   },
   "devDependencies": {

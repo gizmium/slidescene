@@ -1370,7 +1370,7 @@ return Promise$1;
 },{"_process":1}],"howler":[function(require,module,exports){
 (function (global){
 /*!
- *  howler.js v2.0.14
+ *  howler.js v2.0.10
  *  howlerjs.com
  *
  *  (c) 2013-2018, James Simpson of GoldFire Studios
@@ -1650,13 +1650,13 @@ return Promise$1;
       var self = this || Howler;
 
       // Only run this on mobile devices if audio isn't already eanbled.
-      var isMobile = /iPhone|iPad|iPod|Android|BlackBerry|BB10|Silk|Mobi|Chrome/i.test(self._navigator && self._navigator.userAgent);
-      if (self._mobileEnabled || !self.ctx || !isMobile) {
+      var isMobile = /iPhone|iPad|iPod|Android|BlackBerry|BB10|Silk|Mobi/i.test(self._navigator && self._navigator.userAgent);
+      var isTouch = !!(('ontouchend' in window) || (self._navigator && self._navigator.maxTouchPoints > 0) || (self._navigator && self._navigator.msMaxTouchPoints > 0));
+      if (self._mobileEnabled || !self.ctx || (!isMobile && !isTouch)) {
         return;
       }
 
       self._mobileEnabled = false;
-      self.mobileAutoEnable = false;
 
       // Some mobile devices/platforms have distortion issues when opening/closing tabs and/or web views.
       // Bugs in the browser (especially Mobile Safari) can cause the sampleRate to change from 44100 to 48000.
@@ -1673,9 +1673,7 @@ return Promise$1;
       // Call this method on touch start to create and play a buffer,
       // then check if the audio actually played to determine if
       // audio has now been unlocked on iOS, Android, etc.
-      var unlock = function(e) {
-        e.preventDefault();
-
+      var unlock = function() {
         // Fix Android can not play in suspend state.
         Howler._autoResume();
 
@@ -1702,23 +1700,17 @@ return Promise$1;
 
           // Update the unlocked state and prevent this check from happening again.
           self._mobileEnabled = true;
+          self.mobileAutoEnable = false;
 
           // Remove the touch start listener.
           document.removeEventListener('touchstart', unlock, true);
           document.removeEventListener('touchend', unlock, true);
-          document.removeEventListener('click', unlock, true);
-
-          // Let all sounds know that audio has been unlocked.
-          for (var i=0; i<self._howls.length; i++) {
-            self._howls[i]._emit('unlock');
-          }
         };
       };
 
       // Setup a touch start listener to attempt an unlock in.
       document.addEventListener('touchstart', unlock, true);
       document.addEventListener('touchend', unlock, true);
-      document.addEventListener('click', unlock, true);
 
       return self;
     },
@@ -1877,7 +1869,6 @@ return Promise$1;
       self._onvolume = o.onvolume ? [{fn: o.onvolume}] : [];
       self._onrate = o.onrate ? [{fn: o.onrate}] : [];
       self._onseek = o.onseek ? [{fn: o.onseek}] : [];
-      self._onunlock = o.onunlock ? [{fn: o.onunlock}] : [];
       self._onresume = [];
 
       // Web Audio or HTML5 Audio?
@@ -2094,12 +2085,6 @@ return Promise$1;
       sound._stop = (self._sprite[sprite][0] + self._sprite[sprite][1]) / 1000;
       sound._loop = !!(sound._loop || self._sprite[sprite][2]);
 
-      // End the sound instantly if seek is at the end.
-      if (sound._seek >= sound._stop) {
-        self._ended(sound);
-        return;
-      }
-
       // Begin the actual playback.
       var node = sound._node;
       if (self._webAudio) {
@@ -2152,23 +2137,18 @@ return Promise$1;
             var play = node.play();
 
             // Support older browsers that don't support promises, and thus don't have this issue.
-            if (typeof Promise !== 'undefined' && (play instanceof Promise || typeof play.then === 'function')) {
+            if (typeof Promise !== 'undefined' && play instanceof Promise) {
               // Implements a lock to prevent DOMException: The play() request was interrupted by a call to pause().
               self._playLock = true;
 
               // Releases the lock and executes queued actions.
-              play
-                .then(function() {
-                  self._playLock = false;
-                  if (!internal) {
-                    self._emit('play', sound._id);
-                  }
-                })
-                .catch(function() {
-                  self._playLock = false;
-                  self._emit('playerror', sound._id, 'Playback was unable to start. This is most commonly an issue ' +
-                    'on mobile devices and Chrome where playback was not within a user interaction.');
-                });
+              var runLoadQueue = function() {
+                self._playLock = false;
+                if (!internal) {
+                  self._emit('play', sound._id);
+                }
+              };
+              play.then(runLoadQueue, runLoadQueue);
             } else if (!internal) {
               self._emit('play', sound._id);
             }
@@ -2179,7 +2159,7 @@ return Promise$1;
             // If the node is still paused, then we can assume there was a playback issue.
             if (node.paused) {
               self._emit('playerror', sound._id, 'Playback was unable to start. This is most commonly an issue ' +
-                'on mobile devices and Chrome where playback was not within a user interaction.');
+                'on mobile devices where playback was not within a user interaction.');
               return;
             }
 
@@ -2302,7 +2282,7 @@ return Promise$1;
       var self = this;
 
       // If the sound hasn't loaded, add it to the load queue to stop when capable.
-      if (self._state !== 'loaded' || self._playLock) {
+      if (self._state !== 'loaded') {
         self._queue.push({
           event: 'stop',
           action: function() {
@@ -2371,7 +2351,7 @@ return Promise$1;
       var self = this;
 
       // If the sound hasn't loaded, add it to the load queue to mute when capable.
-      if (self._state !== 'loaded'|| self._playLock) {
+      if (self._state !== 'loaded') {
         self._queue.push({
           event: 'mute',
           action: function() {
@@ -2454,7 +2434,7 @@ return Promise$1;
       var sound;
       if (typeof vol !== 'undefined' && vol >= 0 && vol <= 1) {
         // If the sound hasn't loaded, add it to the load queue to change volume when capable.
-        if (self._state !== 'loaded'|| self._playLock) {
+        if (self._state !== 'loaded') {
           self._queue.push({
             event: 'volume',
             action: function() {
@@ -2513,7 +2493,7 @@ return Promise$1;
       var self = this;
 
       // If the sound hasn't loaded, add it to the load queue to fade when capable.
-      if (self._state !== 'loaded' || self._playLock) {
+      if (self._state !== 'loaded') {
         self._queue.push({
           event: 'fade',
           action: function() {
@@ -2724,7 +2704,7 @@ return Promise$1;
       var sound;
       if (typeof rate === 'number') {
         // If the sound hasn't loaded, add it to the load queue to change playback rate when capable.
-        if (self._state !== 'loaded' || self._playLock) {
+        if (self._state !== 'loaded') {
           self._queue.push({
             event: 'rate',
             action: function() {
@@ -2820,7 +2800,7 @@ return Promise$1;
       }
 
       // If the sound hasn't loaded, add it to the load queue to seek when capable.
-      if (self._state !== 'loaded' || self._playLock) {
+      if (self._state !== 'loaded') {
         self._queue.push({
           event: 'seek',
           action: function() {
@@ -2847,33 +2827,28 @@ return Promise$1;
           sound._ended = false;
           self._clearTimer(id);
 
+          // Restart the playback if the sound was playing.
+          if (playing) {
+            self.play(id, true);
+          }
+
           // Update the seek position for HTML5 Audio.
           if (!self._webAudio && sound._node) {
             sound._node.currentTime = seek;
           }
 
-          // Seek and emit when ready.
-          var seekAndEmit = function() {
-            self._emit('seek', id);
-
-            // Restart the playback if the sound was playing.
-            if (playing) {
-              self.play(id, true);
-            }
-          };
-
           // Wait for the play lock to be unset before emitting (HTML5 Audio).
           if (playing && !self._webAudio) {
             var emitSeek = function() {
               if (!self._playLock) {
-                seekAndEmit();
+                self._emit('seek', id);
               } else {
                 setTimeout(emitSeek, 0);
               }
             };
             setTimeout(emitSeek, 0);
           } else {
-            seekAndEmit();
+            self._emit('seek', id);
           }
         } else {
           if (self._webAudio) {
@@ -2972,12 +2947,12 @@ return Promise$1;
 
         // Make sure all timers are cleared out.
         self._clearTimer(sounds[i]._id);
-      }
 
-      // Remove the references in the global Howler object.
-      var index = Howler._howls.indexOf(self);
-      if (index >= 0) {
-        Howler._howls.splice(index, 1);
+        // Remove the references in the global Howler object.
+        var index = Howler._howls.indexOf(self);
+        if (index >= 0) {
+          Howler._howls.splice(index, 1);
+        }
       }
 
       // Delete this sound from the cache (if no other Howl is using it).
@@ -3197,7 +3172,7 @@ return Promise$1;
 
       // When using a sprite, end the track.
       if (!self._webAudio && !loop) {
-        self.stop(sound._id, true);
+        self.stop(sound._id);
       }
 
       return self;
@@ -3349,7 +3324,7 @@ return Promise$1;
       sound._node.bufferSource.loop = sound._loop;
       if (sound._loop) {
         sound._node.bufferSource.loopStart = sound._start || 0;
-        sound._node.bufferSource.loopEnd = sound._stop || 0;
+        sound._node.bufferSource.loopEnd = sound._stop;
       }
       sound._node.bufferSource.playbackRate.setValueAtTime(sound._rate, Howler.ctx.currentTime);
 
@@ -3364,7 +3339,7 @@ return Promise$1;
     _cleanBuffer: function(node) {
       var self = this;
 
-      if (Howler._scratchBuffer && node.bufferSource) {
+      if (Howler._scratchBuffer) {
         node.bufferSource.onended = null;
         node.bufferSource.disconnect(0);
         try { node.bufferSource.buffer = Howler._scratchBuffer; } catch(e) {}
@@ -3599,28 +3574,16 @@ return Promise$1;
    * @param  {Howl}        self
    */
   var decodeAudioData = function(arraybuffer, self) {
-    // Load the sound on success.
-    var success = function(buffer) {
+    // Decode the buffer into an audio source.
+    Howler.ctx.decodeAudioData(arraybuffer, function(buffer) {
       if (buffer && self._sounds.length > 0) {
         cache[self._src] = buffer;
         loadSound(self, buffer);
-      } else {
-        onError();
       }
-    };
-
-    // Fire a load error if something broke.
-    var error = function() {
+    }, function() {
       self._emit('loaderror', null, 'Decoding audio data failed.');
-    };
-
-    // Decode the buffer into an audio source.
-    if (typeof Promise !== 'undefined' && Howler.ctx.decodeAudioData.length === 1) {
-      Howler.ctx.decodeAudioData(arraybuffer).then(success).catch(error);
-    } else {
-      Howler.ctx.decodeAudioData(arraybuffer, success, error);
-    }
-  }
+    });
+  };
 
   /**
    * Sound is now loaded, so finish setting everything up and fire the loaded event.
@@ -3720,7 +3683,7 @@ return Promise$1;
 /*!
  *  Spatial Plugin - Adds support for stereo and 3D audio where Web Audio is supported.
  *  
- *  howler.js v2.0.14
+ *  howler.js v2.0.10
  *  howlerjs.com
  *
  *  (c) 2013-2018, James Simpson of GoldFire Studios
@@ -3947,13 +3910,9 @@ return Promise$1;
             }
 
             if (pannerType === 'spatial') {
-              if (typeof sound._panner.positionX !== 'undefined') {
-                sound._panner.positionX.setValueAtTime(pan, Howler.ctx.currentTime);
-                sound._panner.positionY.setValueAtTime(0, Howler.ctx.currentTime);
-                sound._panner.positionZ.setValueAtTime(0, Howler.ctx.currentTime);
-              } else {
-                sound._panner.setPosition(pan, 0, 0);
-              }
+              sound._panner.positionX.setValueAtTime(pan, Howler.ctx.currentTime);
+              sound._panner.positionY.setValueAtTime(0, Howler.ctx.currentTime);
+              sound._panner.positionZ.setValueAtTime(0, Howler.ctx.currentTime);
             } else {
               sound._panner.pan.setValueAtTime(pan, Howler.ctx.currentTime);
             }
@@ -4027,13 +3986,9 @@ return Promise$1;
               setupPanner(sound, 'spatial');
             }
 
-            if (typeof sound._panner.positionX !== 'undefined') {
-              sound._panner.positionX.setValueAtTime(x, Howler.ctx.currentTime);
-              sound._panner.positionY.setValueAtTime(y, Howler.ctx.currentTime);
-              sound._panner.positionZ.setValueAtTime(z, Howler.ctx.currentTime);
-            } else {
-              sound._panner.setOrientation(x, y, z);
-            }
+            sound._panner.positionX.setValueAtTime(x, Howler.ctx.currentTime);
+            sound._panner.positionY.setValueAtTime(y, Howler.ctx.currentTime);
+            sound._panner.positionZ.setValueAtTime(z, Howler.ctx.currentTime);
           }
 
           self._emit('pos', sound._id);
@@ -4111,13 +4066,9 @@ return Promise$1;
               setupPanner(sound, 'spatial');
             }
 
-            if (typeof sound._panner.orientationX !== 'undefined') {
-              sound._panner.orientationX.setValueAtTime(x, Howler.ctx.currentTime);
-              sound._panner.orientationY.setValueAtTime(y, Howler.ctx.currentTime);
-              sound._panner.orientationZ.setValueAtTime(z, Howler.ctx.currentTime);
-            } else {
-              sound._panner.setOrientation(x, y, z);
-            }
+            sound._panner.orientationX.setValueAtTime(x, Howler.ctx.currentTime);
+            sound._panner.orientationY.setValueAtTime(y, Howler.ctx.currentTime);
+            sound._panner.orientationZ.setValueAtTime(z, Howler.ctx.currentTime);
           }
 
           self._emit('orientation', sound._id);
@@ -4302,21 +4253,8 @@ return Promise$1;
 
       // Reset all spatial plugin properties on this sound.
       self._orientation = parent._orientation;
-      self._stereo = parent._stereo;
       self._pos = parent._pos;
       self._pannerAttr = parent._pannerAttr;
-
-      // If a stereo or position was specified, set it up.
-      if (self._stereo) {
-        parent.stereo(self._stereo);
-      } else if (self._pos) {
-        parent.pos(self._pos[0], self._pos[1], self._pos[2], self._id);
-      } else if (self._panner) {
-        // Disconnect the panner.
-        self._panner.disconnect(0);
-        self._panner = undefined;
-        parent._refreshBuffer(self);
-      }
 
       // Complete resetting of the sound.
       return _super.call(this);
@@ -4345,22 +4283,12 @@ return Promise$1;
       sound._panner.refDistance = sound._pannerAttr.refDistance;
       sound._panner.rolloffFactor = sound._pannerAttr.rolloffFactor;
       sound._panner.panningModel = sound._pannerAttr.panningModel;
-
-      if (typeof sound._panner.positionX !== 'undefined') {
-        sound._panner.positionX.setValueAtTime(sound._pos[0], Howler.ctx.currentTime);
-        sound._panner.positionY.setValueAtTime(sound._pos[1], Howler.ctx.currentTime);
-        sound._panner.positionZ.setValueAtTime(sound._pos[2], Howler.ctx.currentTime);
-      } else {
-        sound._panner.setPosition(sound._pos[0], sound._pos[1], sound._pos[2]);
-      }
-
-      if (typeof sound._panner.orientationX !== 'undefined') {
-        sound._panner.orientationX.setValueAtTime(sound._orientation[0], Howler.ctx.currentTime);
-        sound._panner.orientationY.setValueAtTime(sound._orientation[1], Howler.ctx.currentTime);
-        sound._panner.orientationZ.setValueAtTime(sound._orientation[2], Howler.ctx.currentTime);
-      } else {
-        sound._panner.setOrientation(sound._orientation[0], sound._orientation[1], sound._orientation[2]);
-      }
+      sound._panner.positionX.setValueAtTime(sound._pos[0], Howler.ctx.currentTime);
+      sound._panner.positionY.setValueAtTime(sound._pos[1], Howler.ctx.currentTime);
+      sound._panner.positionZ.setValueAtTime(sound._pos[2], Howler.ctx.currentTime);
+      sound._panner.orientationX.setValueAtTime(sound._orientation[0], Howler.ctx.currentTime);
+      sound._panner.orientationY.setValueAtTime(sound._orientation[1], Howler.ctx.currentTime);
+      sound._panner.orientationZ.setValueAtTime(sound._orientation[2], Howler.ctx.currentTime);
     } else {
       sound._panner = Howler.ctx.createStereoPanner();
       sound._panner.pan.setValueAtTime(sound._stereo, Howler.ctx.currentTime);
