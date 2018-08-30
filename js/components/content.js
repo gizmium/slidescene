@@ -35,17 +35,18 @@
     });
   };
 
-  Content.prototype.load = function(url, medal) {
-    this.medal(medal);
-    this.emit('medal', this.medal());
+  Content.prototype.load = function() {
     this.loadPanel({
-      top: 0,
-      url: url,
-      medal: medal,
+      top: -24,
+      url: 'scenes/index.html',
+      medal: '',
     }).then(function(p) {
+      this.medal(p.medal());
+      this.emit('medal', this.medal());
       p.visible(true);
       return this.loadNewPanels();
     }.bind(this)).then(function() {
+      this.removePanel(this.panels[0]);
       this.onsound();
       this.on('animationend', this.onanimationend.bind(this));
     }.bind(this));

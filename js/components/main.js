@@ -20,6 +20,7 @@
     this.content.on('sound', this.onsound.bind(this));
     this.controls.on('mute', this.onmute.bind(this));
     this.controls.on('unmute', this.onunmute.bind(this));
+    this.content.load();
   };
 
   Main.prototype.onkeydown = (function() {
