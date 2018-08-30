@@ -48,6 +48,7 @@
     }.bind(this)).then(function() {
       this.removePanel(this.panels[0]);
       this.onsound();
+      this.emit('panels', this.panels.slice());
       this.on('animationend', this.onanimationend.bind(this));
     }.bind(this));
   };
@@ -213,6 +214,7 @@
 
     this.loadNewPanels().then(function() {
       this.onsound();
+      this.emit('panels', this.panels.slice());
     }.bind(this));
   };
 
@@ -236,7 +238,9 @@
 
     // show next panels
     this.showPanel(panel);
-    this.loadNewPanels();
+    this.loadNewPanels().then(function() {
+      this.emit('panels', this.panels.slice());
+    }.bind(this));
   };
 
   Content.prototype.onsound = function() {

@@ -67,6 +67,10 @@
     return this.content.sound();
   };
 
+  Panel.prototype.url = function() {
+    return this.content.url();
+  };
+
   Panel.prototype.render = function() {
     return dom.render(Panel.HTML_TEXT);
   };
@@ -174,6 +178,10 @@
         return '';
       }
       return this.module.sound;
+    };
+
+    Content.prototype.url = function() {
+      return dom.contentUrl(this.findElement('.panel-content-frame'));
     };
 
     Content.prototype.canScrollToLeft = function() {

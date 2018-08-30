@@ -81,6 +81,10 @@
     return iframe.contentDocument.documentElement.scrollHeight;
   };
 
+  dom.contentUrl = function(iframe) {
+    return iframe.contentWindow.location.href;
+  };
+
   dom.on = function(el, type, listener, useCapture) {
     el.addEventListener(type, listener, !!useCapture);
   };
