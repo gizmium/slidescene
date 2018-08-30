@@ -122,6 +122,14 @@
     return event.deltaY;
   };
 
+  dom.load = function(key, defaultValue) {
+    return JSON.parse(sessionStorage.getItem(key)) || defaultValue;
+  };
+
+  dom.save = function(key, value) {
+    sessionStorage.setItem(key, JSON.stringify(value));
+  };
+
   if (typeof module !== 'undefined' && module.exports) {
     module.exports = dom;
   } else {
