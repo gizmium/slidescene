@@ -80,6 +80,7 @@
     dom.save('panels', panels.map(function(panel) {
       return {
         top: panel.top(),
+        previous: panels.indexOf(panel.previous),
         visible: panel.visible(),
         url: panel.url(),
         medal: panel.medal(),
