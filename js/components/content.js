@@ -36,7 +36,37 @@
   };
 
   Content.prototype.load = function() {
-    this.loadPanel({
+    var medal = dom.load('medal', null);
+    var panels = dom.load('panels', null);
+    if (medal && panels) {
+      return new Promise(function(resolve) {
+        this.medal(medal);
+        this.emit('medal', this.medal());
+        resolve();
+      }.bind(this)).then(function() {
+        return panels.reduce(function(promise, panel) {
+          return promise.then(function() {
+            return this.loadPanel({
+              top: panel.top,
+              url: panel.url,
+              medal: panel.medal,
+            }).then(function(p) {
+              p.visible(panel.visible);
+            });
+          }.bind(this));
+        }.bind(this), Promise.resolve());
+      }.bind(this)).then(function() {
+        this.panels.forEach(function(panel, index) {
+          var index = panels[index].previous;
+          if (index !== -1) {
+            panel.previous = this.panels[index];
+          }
+        }.bind(this));
+        this.onsound();
+        this.on('animationend', this.onanimationend.bind(this));
+      }.bind(this));
+    }
+    return this.loadPanel({
       top: -24,
       url: 'scenes/index.html',
       medal: '',
