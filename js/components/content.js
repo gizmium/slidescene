@@ -64,6 +64,7 @@
         }.bind(this));
         this.onsound();
         this.on('animationend', this.onanimationend.bind(this));
+        this.draggable.enable();
       }.bind(this));
     }
     return this.loadPanel({
@@ -80,6 +81,7 @@
       this.onsound();
       this.emit('panels', this.panels.slice());
       this.on('animationend', this.onanimationend.bind(this));
+      this.draggable.enable();
     }.bind(this));
   };
 
@@ -206,10 +208,6 @@
       return;
     }
     panel.scrollToRight();
-  };
-
-  Content.prototype.oninit = function() {
-    this.draggable.enable();
   };
 
   Content.prototype.onredraw = function() {
