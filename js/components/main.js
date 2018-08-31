@@ -14,14 +14,15 @@
   });
 
   Main.prototype.oninit = function() {
-    dom.on(this.element(), 'keydown', this.onkeydown.bind(this));
-    dom.on(this.element(), 'wheel', this.onwheel.bind(this));
     this.content.on('medal', this.onmedal.bind(this));
     this.content.on('sound', this.onsound.bind(this));
     this.content.on('panels', this.onpanels.bind(this));
     this.controls.on('mute', this.onmute.bind(this));
     this.controls.on('unmute', this.onunmute.bind(this));
-    this.content.load();
+    this.content.load().then(function() {
+      dom.on(this.element(), 'keydown', this.onkeydown.bind(this));
+      dom.on(this.element(), 'wheel', this.onwheel.bind(this));
+    }.bind(this));
   };
 
   Main.prototype.onkeydown = (function() {
