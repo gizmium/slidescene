@@ -252,10 +252,13 @@
       return;
     }
 
-    this.medal(panel.medal());
-    setTimeout(function() {
-      this.emit('medal', this.medal());
-    }.bind(this), 0);
+    var medal = panel.medal();
+    if (medal !== this.medal()) {
+      this.medal(medal);
+      setTimeout(function() {
+        this.emit('medal', medal);
+      }.bind(this), 0);
+    }
 
     // hide next panels
     var visiblePanels = this.visiblePanels();
