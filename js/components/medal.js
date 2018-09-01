@@ -16,7 +16,7 @@
     return new Promise(function(resolve, reject) {
       var children = dom.children(this.element());
       var name = this.name();
-      var src = 'medals/' + name + '.svg';
+      var src = 'images/medals/' + name + '.svg';
       var onfailed = function() {
         src = Medal.DefaultImageData;
         dom.attr(children[0], { src: src });
