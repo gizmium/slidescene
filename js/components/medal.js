@@ -9,9 +9,6 @@
   });
 
   Medal.prototype.load = function(name) {
-    if (name === this.name()) {
-      return Promise.resolve();
-    }
     this.name(name);
     return new Promise(function(resolve, reject) {
       var children = dom.children(this.element());
