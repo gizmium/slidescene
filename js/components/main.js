@@ -105,9 +105,6 @@
     };
 
     Sound.prototype.load = function(name) {
-      if (this.name === name) {
-        return Promise.resolve();
-      }
       this.name = name;
       return new Promise(function(resolve, reject) {
         var howl = this.howl;
