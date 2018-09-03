@@ -106,24 +106,7 @@
 
     Sound.prototype.load = function(name) {
       this.name = name;
-      return new Promise(function(resolve, reject) {
-        var howl = this.howl;
-        if (!howl) {
-          return resolve();
-        }
-        if (name !== this.name) {
-          return reject();
-        }
-        howl.once('fade', function(){
-          if (howl !== this.howl) {
-            return reject();
-          }
-          howl.unload();
-          this.howl = null;
-          resolve();
-        }.bind(this));
-        howl.fade(1, 0, 1000);
-      }.bind(this)).then(function() {
+      return this.fadeOut().then(function() {
         if (!name) {
           return Promise.resolve();
         }
@@ -148,6 +131,24 @@
       return new Promise(function(resolve) {
         this.howl.play();
         resolve();
+      }.bind(this));
+    };
+
+    Sound.prototype.fadeOut = function() {
+      if (!this.howl) {
+        return Promise.resolve();
+      }
+      return new Promise(function(resolve, reject) {
+        var howl = this.howl;
+        howl.once('fade', function(){
+          if (howl !== this.howl) {
+            return reject();
+          }
+          howl.unload();
+          this.howl = null;
+          resolve();
+        }.bind(this));
+        howl.fade(1, 0, 1000);
       }.bind(this));
     };
 
