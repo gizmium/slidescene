@@ -113,25 +113,18 @@
         if (name !== this.name) {
           return Promise.reject();
         }
-        return new Promise(function(resolve) {
-          this.howl = new howler.Howl({
-            src: ['sounds/' + name + '.mp3'],
-            loop: true,
-            mute: this.muted,
-          });
-          resolve();
-        }.bind(this));
+        this.howl = new howler.Howl({
+          src: ['sounds/' + name + '.mp3'],
+          loop: true,
+          mute: this.muted,
+        });
       }.bind(this));
     };
 
     Sound.prototype.play = function() {
-      if (!this.howl || this.howl.playing()) {
-        return Promise.resolve();
-      }
-      return new Promise(function(resolve) {
+      if (this.howl && !this.howl.playing()) {
         this.howl.play();
-        resolve();
-      }.bind(this));
+      }
     };
 
     Sound.prototype.fadeOut = function() {
