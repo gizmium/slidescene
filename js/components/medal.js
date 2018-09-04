@@ -42,12 +42,6 @@
     }.bind(this));
   };
 
-  Medal.prototype.oninit = function() {
-    var children = dom.children(this.element());
-    dom.attr(children[0], { src: Medal.DefaultImageData });
-    dom.attr(children[1], { src: Medal.DefaultImageData });
-  };
-
   Medal.DefaultImageData = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg==';
 
   if (typeof module !== 'undefined' && module.exports) {
