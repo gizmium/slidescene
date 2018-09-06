@@ -107,6 +107,10 @@
     Sound.prototype.load = function(name) {
       this.name = name;
       return this.fadeOut().then(function() {
+        if (this.howl) {
+          this.howl.unload();
+          this.howl = null;
+        }
         if (!name) {
           return Promise.resolve();
         }
@@ -128,17 +132,15 @@
     };
 
     Sound.prototype.fadeOut = function() {
-      if (!this.howl) {
-        return Promise.resolve();
-      }
       return new Promise(function(resolve, reject) {
         var howl = this.howl;
+        if (!howl) {
+          return resolve();
+        }
         howl.once('fade', function(){
           if (howl !== this.howl) {
             return reject();
           }
-          howl.unload();
-          this.howl = null;
           resolve();
         }.bind(this));
         howl.fade(1, 0, 1000);
