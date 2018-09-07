@@ -99,29 +99,28 @@
 
   Main.Sound = (function() {
     var Sound = function() {
-      this.name = '';
       this.howl = null;
       this.muted = true;
     };
 
+    Sound.prototype.create = function(name) {
+      return new howler.Howl({
+        src: ['sounds/' + name + '.mp3'],
+        loop: true,
+        mute: this.muted,
+      });
+    };
+
     Sound.prototype.load = function(name) {
-      this.name = name;
+      var howl = this.howl;
       return this.fadeOut().then(function() {
+        if (howl !== this.howl) {
+          throw new Error('Failed to load sound "' + name + '"');
+        }
         if (this.howl) {
           this.howl.unload();
-          this.howl = null;
         }
-        if (!name) {
-          return Promise.resolve();
-        }
-        if (name !== this.name) {
-          return Promise.reject();
-        }
-        this.howl = new howler.Howl({
-          src: ['sounds/' + name + '.mp3'],
-          loop: true,
-          mute: this.muted,
-        });
+        this.howl = (name ? this.create(name) : null);
       }.bind(this));
     };
 
@@ -132,18 +131,14 @@
     };
 
     Sound.prototype.fadeOut = function() {
-      return new Promise(function(resolve, reject) {
-        var howl = this.howl;
-        if (!howl) {
+      return new Promise(function(resolve) {
+        if (!this.howl) {
           return resolve();
         }
-        howl.once('fade', function(){
-          if (howl !== this.howl) {
-            return reject();
-          }
+        this.howl.once('fade', function(){
           resolve();
-        }.bind(this));
-        howl.fade(1, 0, 1000);
+        });
+        this.howl.fade(1, 0, 1000);
       }.bind(this));
     };
 
