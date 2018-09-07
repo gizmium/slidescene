@@ -72,9 +72,7 @@
   };
 
   Main.prototype.onsound = function(sound) {
-    this.sound.load(sound).then(function() {
-      this.sound.play();
-    }.bind(this));
+    this.sound.change(sound);
   };
 
   Main.prototype.onpanels = function(panels) {
@@ -111,25 +109,6 @@
       });
     };
 
-    Sound.prototype.load = function(name) {
-      var howl = this.howl;
-      return this.fadeOut().then(function() {
-        if (howl !== this.howl) {
-          throw new Error('Failed to load sound "' + name + '"');
-        }
-        if (this.howl) {
-          this.howl.unload();
-        }
-        this.howl = (name ? this.create(name) : null);
-      }.bind(this));
-    };
-
-    Sound.prototype.play = function() {
-      if (this.howl && !this.howl.playing()) {
-        this.howl.play();
-      }
-    };
-
     Sound.prototype.fadeOut = function() {
       return new Promise(function(resolve) {
         if (!this.howl) {
@@ -139,6 +118,24 @@
           resolve();
         });
         this.howl.fade(1, 0, 1000);
+      }.bind(this));
+    };
+
+    Sound.prototype.change = function(name) {
+      var howl = this.howl;
+      return this.fadeOut().then(function() {
+        if (howl !== this.howl) {
+          throw new Error('Failed to change sound to "' + name + '"');
+        }
+        if (this.howl) {
+          this.howl.unload();
+        }
+        if (!name) {
+          this.howl = null;
+          return;
+        }
+        this.howl = this.create(name);
+        this.howl.play();
       }.bind(this));
     };
 
