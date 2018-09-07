@@ -221,7 +221,7 @@
           this.width(dom.contentWidth(frameElement));
           this.offsetWidth(dom.offsetWidth(this.element()));
           this.height(dom.contentHeight(frameElement));
-          this.module = dom.contentWindow(frameElement).module;
+          this.module = dom.contentWindow(frameElement).scene.exports;
           this.scrollLeft(this.medalIndex(medal) * this.offsetWidth());
           this.emit('scroll');
           dom.css(frameElement, {
