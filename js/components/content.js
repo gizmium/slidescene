@@ -79,7 +79,7 @@
     }.bind(this)).then(function() {
       this.removePanel(this.panels[0]);
       this.onsound();
-      this.emit('panels', this.panels.slice());
+      this.onpanels();
       this.on('animationend', this.onanimationend.bind(this));
       this.draggable.enable();
     }.bind(this));
@@ -242,7 +242,7 @@
 
     this.loadNewPanels().then(function() {
       this.onsound();
-      this.emit('panels', this.panels.slice());
+      this.onpanels();
     }.bind(this));
   };
 
@@ -270,7 +270,7 @@
     // show next panels
     this.showPanel(panel);
     this.loadNewPanels().then(function() {
-      this.emit('panels', this.panels.slice());
+      this.onpanels();
     }.bind(this));
   };
 
@@ -285,6 +285,18 @@
     }
     this.sound(sound);
     this.emit('sound', sound);
+  };
+
+  Content.prototype.onpanels = function() {
+    dom.save('panels', this.panels.map(function(panel) {
+      return {
+        top: panel.top(),
+        previous: this.panels.indexOf(panel.previous),
+        visible: panel.visible(),
+        url: panel.url(),
+        medal: panel.medal(),
+      };
+    }.bind(this)));
   };
 
   Content.Draggable = (function() {

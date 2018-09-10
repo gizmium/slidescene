@@ -16,7 +16,6 @@
   Main.prototype.oninit = function() {
     this.content.on('medal', this.onmedal.bind(this));
     this.content.on('sound', this.onsound.bind(this));
-    this.content.on('panels', this.onpanels.bind(this));
     this.controls.on('mute', this.onmute.bind(this));
     this.controls.on('unmute', this.onunmute.bind(this));
     this.content.load().then(function() {
@@ -73,18 +72,6 @@
 
   Main.prototype.onsound = function(sound) {
     this.sound.change(sound);
-  };
-
-  Main.prototype.onpanels = function(panels) {
-    dom.save('panels', panels.map(function(panel) {
-      return {
-        top: panel.top(),
-        previous: panels.indexOf(panel.previous),
-        visible: panel.visible(),
-        url: panel.url(),
-        medal: panel.medal(),
-      };
-    }));
   };
 
   Main.prototype.onmute = function() {
