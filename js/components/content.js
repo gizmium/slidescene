@@ -40,8 +40,7 @@
     var panels = dom.load('panels', null);
     if (medal && panels) {
       return new Promise(function(resolve) {
-        this.medal(medal);
-        this.emit('medal', this.medal());
+        this.onmedal(medal);
         resolve();
       }.bind(this)).then(function() {
         return panels.reduce(function(promise, panel) {
@@ -72,8 +71,7 @@
       url: 'scenes/index.html',
       medal: '',
     }).then(function(p) {
-      this.medal(p.medal());
-      this.emit('medal', this.medal());
+      this.onmedal(p.medal());
       p.visible(true);
       return this.loadNewPanels();
     }.bind(this)).then(function() {
@@ -254,9 +252,8 @@
 
     var medal = panel.medal();
     if (medal !== this.medal()) {
-      this.medal(medal);
       setTimeout(function() {
-        this.emit('medal', medal);
+        this.onmedal(medal);
       }.bind(this), 0);
     }
 
@@ -272,6 +269,11 @@
     this.loadNewPanels().then(function() {
       this.onpanels();
     }.bind(this));
+  };
+
+  Content.prototype.onmedal = function(medal) {
+    this.medal(medal);
+    this.emit('medal', medal);
   };
 
   Content.prototype.onsound = function() {
