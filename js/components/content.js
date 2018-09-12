@@ -274,6 +274,7 @@
   Content.prototype.onmedal = function(medal) {
     this.medal(medal);
     this.emit('medal', medal);
+    dom.save('medal', medal);
   };
 
   Content.prototype.onsound = function() {

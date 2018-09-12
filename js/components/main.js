@@ -65,9 +65,7 @@
   })();
 
   Main.prototype.onmedal = function(medal) {
-    this.controls.loadMedal(medal).then(function() {
-      dom.save('medal', medal);
-    });
+    this.controls.loadMedal(medal);
   };
 
   Main.prototype.onsound = function(sound) {
