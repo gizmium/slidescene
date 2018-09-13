@@ -4,20 +4,22 @@
   var jCore = require('jcore');
   var dom = app.dom || require('../dom.js');
   var Content = app.Content || require('./content.js');
-  var Controls = app.Controls || require('./controls.js');
+  var Medal = app.Medal || require('./medal.js');
+  var MuteButton = app.MuteButton || require('./mute-button.js');
   var Sound = app.Sound || require('../controllers/sound.js');
 
   var Main = jCore.Component.inherits(function() {
     this.sound = new Sound();
     this.content = new Content({ element: this.findElement('.content') });
-    this.controls = new Controls({ element: this.findElement('.controls') });
+    this.medal = new Medal({ element: this.findElement('.medal') });
+    this.muteButton = new MuteButton({ element: this.findElement('.mute-button') });
   });
 
   Main.prototype.oninit = function() {
     this.content.on('medal', this.onmedal.bind(this));
     this.content.on('sound', this.onsound.bind(this));
-    this.controls.on('mute', this.onmute.bind(this));
-    this.controls.on('unmute', this.onunmute.bind(this));
+    this.muteButton.on('mute', this.onmute.bind(this));
+    this.muteButton.on('unmute', this.onunmute.bind(this));
     this.content.load().then(function() {
       dom.on(this.element(), 'keydown', this.onkeydown.bind(this));
       dom.on(this.element(), 'wheel', this.onwheel.bind(this));
@@ -65,7 +67,7 @@
   })();
 
   Main.prototype.onmedal = function(medal) {
-    this.controls.loadMedal(medal);
+    this.medal.load(medal);
   };
 
   Main.prototype.onsound = function(sound) {
