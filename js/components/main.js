@@ -67,7 +67,7 @@
   })();
 
   Main.prototype.onmedal = function(medal) {
-    this.medal.load(medal);
+    this.medal.change(medal);
   };
 
   Main.prototype.onsound = function(sound) {

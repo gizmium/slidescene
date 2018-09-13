@@ -9,7 +9,7 @@
     this.src = this.prop('');
   });
 
-  Medal.prototype.load = function(name) {
+  Medal.prototype.change = function(name) {
     this.name(name);
     return new Promise(function(resolve, reject) {
       var children = dom.children(this.element());
