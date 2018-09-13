@@ -26,6 +26,22 @@
     }.bind(this));
   };
 
+  Main.prototype.onmedal = function(medal) {
+    this.medal.change(medal);
+  };
+
+  Main.prototype.onsound = function(sound) {
+    this.sound.change(sound);
+  };
+
+  Main.prototype.onmute = function() {
+    this.sound.mute();
+  };
+
+  Main.prototype.onunmute = function() {
+    this.sound.unmute();
+  };
+
   Main.prototype.onkeydown = (function() {
     var map = {
       37: 'moveLeft',
@@ -65,22 +81,6 @@
       }.bind(this), 100);
     };
   })();
-
-  Main.prototype.onmedal = function(medal) {
-    this.medal.change(medal);
-  };
-
-  Main.prototype.onsound = function(sound) {
-    this.sound.change(sound);
-  };
-
-  Main.prototype.onmute = function() {
-    this.sound.mute();
-  };
-
-  Main.prototype.onunmute = function() {
-    this.sound.unmute();
-  };
 
   if (typeof module !== 'undefined' && module.exports) {
     module.exports = Main;
