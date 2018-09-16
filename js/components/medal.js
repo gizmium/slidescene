@@ -6,21 +6,23 @@
 
   var Medal = jCore.Component.inherits(function() {
     this.name = this.prop('');
-    this.src = this.prop('');
   });
+
+  Medal.prototype.src = function() {
+    return (this.name() ? 'medals/' + this.name() + '.svg' : Medal.SRC_EMPTY);
+  };
 
   Medal.prototype.change = function(name) {
     this.name(name);
     return new Promise(function(resolve, reject) {
       var children = dom.children(this.element());
       var name = this.name();
-      this.src('medals/' + name + '.svg');
       dom.once(children[0], 'load', function() {
-        if (name !== this.name()) {
+        if (this.name() && name !== this.name()) {
           return reject();
         }
         dom.once(this.element(), 'transitionend', function() {
-          if (name !== this.name()) {
+          if (this.name() && name !== this.name()) {
             return reject();
           }
           dom.append(this.element(), children[0]);
@@ -44,10 +46,11 @@
   };
 
   Medal.prototype.onfailed = function(event) {
-    var src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg==';
-    this.src(src);
+    this.name('');
     dom.attr(dom.target(event), { src: this.src() });
   };
+
+  Medal.SRC_EMPTY = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg==';
 
   if (typeof module !== 'undefined' && module.exports) {
     module.exports = Medal;
