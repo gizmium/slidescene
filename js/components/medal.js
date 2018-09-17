@@ -50,7 +50,7 @@
     dom.attr(dom.target(event), { src: this.src() });
   };
 
-  Medal.SRC_EMPTY = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg==';
+  Medal.SRC_EMPTY = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWP49evXfwAJzgPuP0JMDwAAAABJRU5ErkJggg==';
 
   if (typeof module !== 'undefined' && module.exports) {
     module.exports = Medal;
