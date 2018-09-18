@@ -39,29 +39,12 @@
     var medal = dom.load('medal', null);
     var panels = dom.load('panels', null);
     if (medal && panels) {
-      this.onmedal(medal);
-      return panels.reduce(function(promise, panel) {
-        return promise.then(function() {
-          return this.loadPanel({
-            top: panel.top,
-            url: panel.url,
-            medal: panel.medal,
-          }).then(function(p) {
-            p.visible(panel.visible);
-          });
-        }.bind(this));
-      }.bind(this), Promise.resolve()).then(function() {
-        this.panels.forEach(function(panel, index) {
-          var index = panels[index].previous;
-          if (index !== -1) {
-            panel.previous = this.panels[index];
-          }
-        }.bind(this));
-        this.onsound();
-        this.on('animationend', this.onanimationend.bind(this));
-        this.draggable.enable();
-      }.bind(this));
+      return this.loadFromCache(medal, panels);
     }
+    return this.loadDefault();
+  };
+
+  Content.prototype.loadDefault = function() {
     return this.loadPanel({
       top: -24,
       url: 'scenes/index.html',
@@ -74,6 +57,31 @@
       this.removePanel(this.panels[0]);
       this.onsound();
       this.onpanels();
+      this.on('animationend', this.onanimationend.bind(this));
+      this.draggable.enable();
+    }.bind(this));
+  };
+
+  Content.prototype.loadFromCache = function(medal, panels) {
+    this.onmedal(medal);
+    return panels.reduce(function(promise, panel) {
+      return promise.then(function() {
+        return this.loadPanel({
+          top: panel.top,
+          url: panel.url,
+          medal: panel.medal,
+        }).then(function(p) {
+          p.visible(panel.visible);
+        });
+      }.bind(this));
+    }.bind(this), Promise.resolve()).then(function() {
+      this.panels.forEach(function(panel, index) {
+        var index = panels[index].previous;
+        if (index !== -1) {
+          panel.previous = this.panels[index];
+        }
+      }.bind(this));
+      this.onsound();
       this.on('animationend', this.onanimationend.bind(this));
       this.draggable.enable();
     }.bind(this));
