@@ -251,7 +251,6 @@
         this.redraw();
         setTimeout(function() {
           this.scrollWithAnimation(rest - dx);
-          this.emit('scroll');
         }.bind(this), 0);
       });
     };
