@@ -39,9 +39,9 @@
     var medal = dom.load('medal', null);
     var panels = dom.load('panels', null);
     if (medal && panels) {
-      return this.loadFromCache(medal, panels);
+      return this.loadFromCache(medal, panels).then(this.onload.bind(this));
     }
-    return this.loadDefault();
+    return this.loadDefault().then(this.onload.bind(this));
   };
 
   Content.prototype.loadDefault = function() {
@@ -55,10 +55,6 @@
       return this.loadNewPanels();
     }.bind(this)).then(function() {
       this.removePanel(this.panels[0]);
-      this.onsound();
-      this.onpanels();
-      this.on('animationend', this.onanimationend.bind(this));
-      this.draggable.enable();
     }.bind(this));
   };
 
@@ -81,9 +77,6 @@
           panel.previous = this.panels[index];
         }
       }.bind(this));
-      this.onsound();
-      this.on('animationend', this.onanimationend.bind(this));
-      this.draggable.enable();
     }.bind(this));
   };
 
@@ -232,6 +225,13 @@
         this.movePanelsWithAnimation(rest - dy);
       }.bind(this), 0);
     });
+  };
+
+  Content.prototype.onload = function() {
+    this.onsound();
+    this.onpanels();
+    this.on('animationend', this.onanimationend.bind(this));
+    this.draggable.enable();
   };
 
   Content.prototype.onanimationend = function() {
