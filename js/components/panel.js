@@ -77,7 +77,7 @@
 
   Panel.prototype.onappend = function() {
     this.content.on('scroll', this.onscroll.bind(this));
-    this.content.on('animationend', this.onanimationend.bind(this));
+    this.content.on('animationend', this.emit.bind(this, 'animationend', this));
     this.leftButton.on('tap', this.onleft.bind(this));
     this.rightButton.on('tap', this.onright.bind(this));
   };
@@ -109,10 +109,6 @@
   Panel.prototype.onscroll = function() {
     this.leftButton.disabled(!this.content.canScrollToLeft());
     this.rightButton.disabled(!this.content.canScrollToRight());
-  };
-
-  Panel.prototype.onanimationend = function() {
-    this.emit('animationend', this);
   };
 
   Panel.prototype.onleft = function() {
