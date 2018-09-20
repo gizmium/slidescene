@@ -159,25 +159,15 @@
     };
 
     Content.prototype.medal = function() {
-      if (!this.module) {
-        return '';
-      }
-      var index = Math.round(this.scrollLeft() / this.offsetWidth());
-      return this.module.medals[index];
+      return (this.module ? this.module.medals[Math.round(this.scrollLeft() / this.offsetWidth())] : '');
     };
 
     Content.prototype.next = function() {
-      if (!this.module) {
-        return '';
-      }
-      return this.module.nexts[this.medalIndex(this.medal())];
+      return (this.module ? this.module.nexts[this.medalIndex(this.medal())] : '');
     };
 
     Content.prototype.sound = function() {
-      if (!this.module) {
-        return '';
-      }
-      return this.module.sound;
+      return (this.module ? this.module.sound : '');
     };
 
     Content.prototype.url = function() {
