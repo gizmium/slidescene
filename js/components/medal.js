@@ -13,10 +13,9 @@
   };
 
   Medal.prototype.change = function(name) {
-    this.name(name);
     return new Promise(function(resolve, reject) {
       var children = dom.children(this.element());
-      var name = this.name();
+      this.name(name);
       dom.once(children[0], 'load', function() {
         if (this.name() && name !== this.name()) {
           return reject();
