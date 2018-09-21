@@ -210,7 +210,6 @@
           this.redraw();
           this.module = dom.contentWindow(frameElement).scene.exports;
           this.onscroll(this.scrollLeft());
-          this.emit('scroll');
           resolve();
         }.bind(this));
         dom.attr(frameElement, { src: url });
