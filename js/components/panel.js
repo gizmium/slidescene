@@ -114,12 +114,14 @@
   Panel.prototype.onleft = function() {
     if (this.content.canScrollToLeft()) {
       this.content.scrollToLeft();
+      this.content.redraw();
     }
   };
 
   Panel.prototype.onright = function() {
     if (this.content.canScrollToRight()) {
       this.content.scrollToRight();
+      this.content.redraw();
     }
   };
 
@@ -184,17 +186,13 @@
     };
 
     Content.prototype.scrollToLeft = function() {
-      setTimeout(function() {
-        var left = this.scrollLeft() % this.offsetWidth();
-        this.scrollWithAnimation(left !== 0 ? left : this.offsetWidth());
-      }.bind(this), 0);
+      var left = this.scrollLeft() % this.offsetWidth();
+      this.scrollWithAnimation(left !== 0 ? left : this.offsetWidth());
     };
 
     Content.prototype.scrollToRight = function() {
-      setTimeout(function() {
-        var right = this.offsetWidth() - this.scrollLeft() % this.offsetWidth();
-        this.scrollWithAnimation(right !== 0 ? -right : -this.offsetWidth());
-      }.bind(this), 0);
+      var right = this.offsetWidth() - this.scrollLeft() % this.offsetWidth();
+      this.scrollWithAnimation(right !== 0 ? -right : -this.offsetWidth());
     };
 
     Content.prototype.load = function(url, medal) {
