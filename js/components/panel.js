@@ -127,9 +127,7 @@
 
   Panel.HTML_TEXT = [
     '<div class="panel">',
-      '<div class="panel-content">',
-        '<iframe class="panel-content-frame" scrolling="no"></iframe>',
-      '</div>',
+      '<iframe class="panel-content" scrolling="no"></iframe>',
       '<div class="panel-button-left panel-button"></div>',
       '<div class="panel-button-right panel-button"></div>',
     '</div>',
@@ -138,7 +136,7 @@
   Panel.Content = (function() {
     var Content = jCore.Component.inherits(function() {
       this.width = this.prop(0);
-      this.offsetWidth = this.prop(0);
+      this.offsetWidth = this.prop(624);
       this.height = this.prop(0);
       this.scrollLeft = this.prop(0);
       this.scrollWithAnimation = this.prop(0);
@@ -169,7 +167,7 @@
     };
 
     Content.prototype.url = function() {
-      return dom.contentUrl(this.findElement('.panel-content-frame'));
+      return dom.contentUrl(this.element());
     };
 
     Content.prototype.canScrollToLeft = function() {
@@ -197,28 +195,26 @@
 
     Content.prototype.load = function(url, medal) {
       return new Promise(function(resolve) {
-        var frameElement = this.findElement('.panel-content-frame');
-        dom.once(frameElement, 'load', function() {
-          this.width(dom.contentWidth(frameElement));
-          this.offsetWidth(dom.offsetWidth(this.element()));
-          this.height(dom.contentHeight(frameElement));
+        dom.once(this.element(), 'load', function() {
+          this.width(dom.contentWidth(this.element()));
+          this.height(dom.contentHeight(this.element()));
           this.scrollLeft(this.medalIndex(medal) * this.offsetWidth());
-          dom.css(frameElement, {
+          dom.css(this.element(), {
             height: this.height() + 'px',
             width: this.width() + 'px',
           });
           this.redraw();
-          this.module = dom.contentWindow(frameElement).scene.exports;
+          this.module = dom.contentWindow(this.element()).scene.exports;
           this.onscroll(this.scrollLeft());
           resolve();
         }.bind(this));
-        dom.attr(frameElement, { src: url });
+        dom.attr(this.element(), { src: url });
       }.bind(this));
     };
 
     Content.prototype.onredraw = function() {
       this.redrawBy('scrollLeft', function(scrollLeft) {
-        dom.scrollLeft(this.element(), scrollLeft);
+        dom.translateX(this.element(), -scrollLeft);
         this.onscroll(scrollLeft);
         setTimeout(function() {
           this.emit('scroll');
@@ -237,7 +233,7 @@
         }
         var dx = (rest > 0 ? 1 : -1) * Math.min(Math.abs(rest), 24);
         this.scroll(dx);
-        dom.scrollLeft(this.element(), this.scrollLeft());
+        dom.translateX(this.element(), -this.scrollLeft());
         this.onscroll(this.scrollLeft());
         setTimeout(function() {
           this.emit('scroll');

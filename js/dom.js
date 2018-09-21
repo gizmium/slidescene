@@ -46,16 +46,8 @@
     el.dataset[key] = value;
   };
 
-  dom.offsetWidth = function(el) {
-    return el.offsetWidth;
-  };
-
   dom.offsetHeight = function(el) {
     return el.offsetHeight;
-  };
-
-  dom.scrollLeft = function(el, value) {
-    el.scrollLeft = value;
   };
 
   dom.transform = function(el, value) {
@@ -63,6 +55,10 @@
       transform: value,
       webkitTransform: value,
     });
+  };
+
+  dom.translateX = function(el, x) {
+    dom.transform(el, 'translateX(' + x + 'px)');
   };
 
   dom.translateY = function(el, y) {
