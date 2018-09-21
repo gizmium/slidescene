@@ -207,14 +207,15 @@
           this.width(dom.contentWidth(frameElement));
           this.offsetWidth(dom.offsetWidth(this.element()));
           this.height(dom.contentHeight(frameElement));
-          this.module = dom.contentWindow(frameElement).scene.exports;
           this.scrollLeft(this.medalIndex(medal) * this.offsetWidth());
-          this.emit('scroll');
           dom.css(frameElement, {
             height: this.height() + 'px',
             width: this.width() + 'px',
           });
           this.redraw();
+          this.module = dom.contentWindow(frameElement).scene.exports;
+          this.onscroll(this.scrollLeft());
+          this.emit('scroll');
           resolve();
         }.bind(this));
         dom.attr(frameElement, { src: url });
@@ -228,8 +229,13 @@
       });
 
       this.redrawBy('scrollWithAnimation', function(rest) {
+        if (!this.module) {
+          return;
+        }
         if (rest === 0) {
-          this.emit('animationend');
+          setTimeout(function() {
+            this.emit('animationend');
+          }.bind(this), 0);
           return;
         }
         var dx = (rest > 0 ? 1 : -1) * Math.min(Math.abs(rest), 24);

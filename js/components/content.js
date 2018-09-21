@@ -256,9 +256,7 @@
 
     var medal = panel.medal();
     if (medal !== this.medal()) {
-      setTimeout(function() {
-        this.onmedal(medal);
-      }.bind(this), 0);
+      this.onmedal(medal);
     }
 
     // hide next panels
