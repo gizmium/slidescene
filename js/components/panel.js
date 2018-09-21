@@ -181,9 +181,6 @@
     Content.prototype.scroll = function(dx) {
       var scrollLeft = helper.clamp(this.scrollLeft() - dx, 0, this.width() - this.offsetWidth());
       this.scrollLeft(scrollLeft);
-      setTimeout(function() {
-        this.emit('scroll');
-      }.bind(this), 0);
     };
 
     Content.prototype.scrollToLeft = function() {
@@ -226,6 +223,9 @@
       this.redrawBy('scrollLeft', function(scrollLeft) {
         dom.scrollLeft(this.element(), scrollLeft);
         this.onscroll(scrollLeft);
+        setTimeout(function() {
+          this.emit('scroll');
+        }.bind(this), 0);
       });
 
       this.redrawBy('scrollWithAnimation', function(rest) {
@@ -243,6 +243,7 @@
         dom.scrollLeft(this.element(), this.scrollLeft());
         this.onscroll(this.scrollLeft());
         setTimeout(function() {
+          this.emit('scroll');
           this.scrollWithAnimation(rest - dx);
         }.bind(this), 0);
       });
