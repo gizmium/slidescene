@@ -240,7 +240,8 @@
         }
         var dx = (rest > 0 ? 1 : -1) * Math.min(Math.abs(rest), 24);
         this.scroll(dx);
-        this.redraw();
+        dom.scrollLeft(this.element(), this.scrollLeft());
+        this.onscroll(this.scrollLeft());
         setTimeout(function() {
           this.scrollWithAnimation(rest - dx);
         }.bind(this), 0);
