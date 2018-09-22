@@ -205,10 +205,6 @@
           this.width(dom.contentWidth(this.element()));
           this.height(dom.contentHeight(this.element()));
           this.scrollLeft(this.medalIndex(medal) * this.offsetWidth());
-          dom.css(this.element(), {
-            height: this.height() + 'px',
-            width: this.width() + 'px',
-          });
           this.redraw();
           this.module = dom.contentWindow(this.element()).scene.exports;
           this.onscroll(this.scrollLeft());
@@ -219,6 +215,13 @@
     };
 
     Content.prototype.onredraw = function() {
+      this.redrawBy('width', 'height', function(width, height) {
+        dom.css(this.element(), {
+          height: height + 'px',
+          width: width + 'px',
+        });
+      });
+
       this.redrawBy('scrollLeft', function(scrollLeft) {
         dom.translateX(this.element(), -scrollLeft);
         this.onscroll(scrollLeft);
