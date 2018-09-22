@@ -391,7 +391,7 @@
         d = -overflowPanel.top();
       }
       content.movePanelsWithAnimation(d);
-      if (d === 0) {
+      if (d === 0 && context.ddy !== 0) {
         // XXX: no need to move panels but handle 'animationend' event
         content.onanimationend();
       }
@@ -411,7 +411,7 @@
         d = (-left < right ? -left : -right);
       }
       panel.scrollWithAnimation(d);
-      if (d === 0) {
+      if (d === 0 && context.ddx !== 0) {
         // XXX: no need to scroll panel but handle 'animationend' event
         content.onpanelanimationend(panel);
       }
