@@ -7,10 +7,12 @@
   var Button = app.Button || require('./button.js');
 
   var Panel = jCore.Component.inherits(function(props) {
+    this.width = this.prop(624);
     this.top = this.prop(props.top);
     this.paddingTop = this.prop(12);
     this.paddingBottom = this.prop(12);
     this.visible = this.prop(false);
+    this.url = this.prop('');
     this.content = new Panel.Content({ element: this.findElement('.panel-content') });
     this.leftButton = new Button({ element: this.findElement('.panel-button-left') });
     this.rightButton = new Button({ element: this.findElement('.panel-button-right') });
@@ -26,15 +28,39 @@
   };
 
   Panel.prototype.left = function() {
-    return -this.content.scrollLeft() % this.content.offsetWidth();
+    return -this.content.scrollLeft() % this.width();
   };
 
   Panel.prototype.right = function() {
-    return this.left() + this.content.offsetWidth();
+    return this.left() + this.width();
+  };
+
+  Panel.prototype.medalIndex = function() {
+    return Math.round(this.content.scrollLeft() / this.width());
+  };
+
+  Panel.prototype.medal = function() {
+    return this.content.medal(this.medalIndex());
+  };
+
+  Panel.prototype.next = function() {
+    return this.content.next(this.medalIndex());
+  };
+
+  Panel.prototype.sound = function() {
+    return this.content.sound();
+  };
+
+  Panel.prototype.load = function(url, medal) {
+    this.url(url);
+    return this.content.load(url).then(function() {
+      this.content.scrollLeft(this.content.indexOf(medal) * this.width());
+      return this;
+    }.bind(this));
   };
 
   Panel.prototype.scroll = function(dx) {
-    var scrollLeft = helper.clamp(this.content.scrollLeft() - dx, 0, this.content.width() - this.content.offsetWidth());
+    var scrollLeft = helper.clamp(this.content.scrollLeft() - dx, 0, this.content.width() - this.width());
     this.content.scrollLeft(scrollLeft);
   };
 
@@ -42,34 +68,20 @@
     this.content.scrollWithAnimation(dx);
   };
 
+  Panel.prototype.canScrollToLeft = function() {
+    return (this.content.scrollLeft() > 0);
+  };
+
+  Panel.prototype.canScrollToRight = function() {
+    return (this.content.scrollLeft() < (this.content.width() - this.width()));
+  };
+
   Panel.prototype.scrollToLeft = function() {
-    this.content.scrollToLeft();
+    this.scrollWithAnimation(-this.left() || this.width());
   };
 
   Panel.prototype.scrollToRight = function() {
-    this.content.scrollToRight();
-  };
-
-  Panel.prototype.load = function(url, medal) {
-    return this.content.load(url, medal).then(function() {
-      return this;
-    }.bind(this));
-  };
-
-  Panel.prototype.medal = function() {
-    return this.content.medal();
-  };
-
-  Panel.prototype.next = function() {
-    return this.content.next();
-  };
-
-  Panel.prototype.sound = function() {
-    return this.content.sound();
-  };
-
-  Panel.prototype.url = function() {
-    return this.content.url();
+    this.scrollWithAnimation(-this.right() || -this.width());
   };
 
   Panel.prototype.render = function() {
@@ -94,10 +106,6 @@
       dom.translateY(this.element(), top);
     });
 
-    this.redrawBy('visible', function(visible) {
-      dom.toggleClass(this.element(), 'hide', !visible);
-    });
-
     this.redrawBy('paddingTop', function(paddingTop) {
       dom.css(this.element(), { 'padding-top': paddingTop + 'px' });
     });
@@ -105,29 +113,37 @@
     this.redrawBy('paddingBottom', function(paddingBottom) {
       dom.css(this.element(), { 'padding-bottom': paddingBottom + 'px' });
     });
+
+    this.redrawBy('visible', function(visible) {
+      dom.toggleClass(this.element(), 'hide', !visible);
+    });
   };
 
   Panel.prototype.onscroll = function() {
-    this.leftButton.disabled(!this.content.canScrollToLeft());
-    this.rightButton.disabled(!this.content.canScrollToRight());
+    this.leftButton.disabled(!this.canScrollToLeft());
+    this.rightButton.disabled(!this.canScrollToRight());
   };
 
   Panel.prototype.onanimationend = function() {
-    if (this.content.scrollLeft() % this.content.offsetWidth() === 0) {
+    if (this.content.scrollLeft() % this.width() === 0) {
       this.emit('animationend', this);
     }
   };
 
   Panel.prototype.onleft = function() {
-    if (this.content.canScrollToLeft()) {
-      this.content.scrollToLeft();
+    if (this.canScrollToLeft()) {
+      this.scrollToLeft();
+
+      // XXX: start scrolling not to be interrupted by dragging content
       this.content.redraw();
     }
   };
 
   Panel.prototype.onright = function() {
-    if (this.content.canScrollToRight()) {
-      this.content.scrollToRight();
+    if (this.canScrollToRight()) {
+      this.scrollToRight();
+
+      // XXX: start scrolling not to be interrupted by dragging content
       this.content.redraw();
     }
   };
@@ -143,59 +159,33 @@
   Panel.Content = (function() {
     var Content = jCore.Component.inherits(function() {
       this.width = this.prop(0);
-      this.offsetWidth = this.prop(624);
       this.height = this.prop(0);
-      this.scrollLeft = this.prop(0);
+      this.scrollLeft = this.prop(-1);
       this.scrollWithAnimation = this.prop(0);
       this.module = null;
     });
 
-    Content.prototype.medalIndex = function(medal) {
+    Content.prototype.indexOf = function(medal) {
       if (!this.module) {
         return 0;
       }
       var index = this.module.medals.indexOf(medal);
-      if (index === -1) {
-        return 0;
-      }
-      return index;
+      return (index !== -1 ? index : 0);
     };
 
-    Content.prototype.medal = function() {
-      return (this.module ? this.module.medals[Math.round(this.scrollLeft() / this.offsetWidth())] : '');
+    Content.prototype.medal = function(index) {
+      return (this.module ? this.module.medals[index] : '');
     };
 
-    Content.prototype.next = function() {
-      return (this.module ? this.module.nexts[this.medalIndex(this.medal())] : '');
+    Content.prototype.next = function(index) {
+      return (this.module ? this.module.nexts[index] : '');
     };
 
     Content.prototype.sound = function() {
       return (this.module ? this.module.sound : '');
     };
 
-    Content.prototype.url = function() {
-      return dom.contentUrl(this.element());
-    };
-
-    Content.prototype.canScrollToLeft = function() {
-      return (this.scrollLeft() > 0);
-    };
-
-    Content.prototype.canScrollToRight = function() {
-      return (this.scrollLeft() < (this.width() - this.offsetWidth()));
-    };
-
-    Content.prototype.scrollToLeft = function() {
-      var left = this.scrollLeft() % this.offsetWidth();
-      this.scrollWithAnimation(left !== 0 ? left : this.offsetWidth());
-    };
-
-    Content.prototype.scrollToRight = function() {
-      var right = this.offsetWidth() - this.scrollLeft() % this.offsetWidth();
-      this.scrollWithAnimation(right !== 0 ? -right : -this.offsetWidth());
-    };
-
-    Content.prototype.load = function(url, medal) {
+    Content.prototype.load = function(url) {
       return new Promise(function(resolve) {
         dom.once(this.element(), 'load', function() {
           resolve(dom.contentWindow(this.element()).scene.exports);
@@ -204,10 +194,10 @@
       }.bind(this)).then(function(module) {
         this.width(dom.contentWidth(this.element()));
         this.height(dom.contentHeight(this.element()));
-        this.scrollLeft(this.medalIndex(medal) * this.offsetWidth());
+
+        // XXX: redraw once before acquiring module not to dispatch events for scrolling
         this.redraw();
         this.module = module;
-        this.onscroll(this.scrollLeft());
       }.bind(this));
     };
 
