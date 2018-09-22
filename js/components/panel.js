@@ -54,7 +54,8 @@
   Panel.prototype.load = function(url, medal) {
     this.url(url);
     return this.content.load(url).then(function() {
-      this.content.scrollLeft(this.content.indexOf(medal) * this.width());
+      var index = (medal ? this.content.indexOf(medal) : 0);
+      this.content.scrollLeft(this.width() * index);
       return this;
     }.bind(this));
   };
@@ -166,11 +167,7 @@
     });
 
     Content.prototype.indexOf = function(medal) {
-      if (!this.module) {
-        return 0;
-      }
-      var index = this.module.medals.indexOf(medal);
-      return (index !== -1 ? index : 0);
+      return (this.module ? this.module.medals.indexOf(medal) : -1);
     };
 
     Content.prototype.medal = function(index) {
