@@ -365,9 +365,6 @@
     };
 
     Draggable.prototype.onendy = function(content, dx, dy, event, context) {
-      if (context.ddy === 0) {
-        return;
-      }
       // find that a part of the panel located on the out of the window
       var overflowPanel = content.panelFromTop(0);
       if (!overflowPanel) {
@@ -401,9 +398,6 @@
     };
 
     Draggable.prototype.onendx = function(content, dx, dy, event, context) {
-      if (context.ddx === 0) {
-        return;
-      }
       var panel = context.panel;
       if (!panel) {
         return;
