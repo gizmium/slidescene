@@ -211,9 +211,7 @@
         return;
       }
       if (rest === 0) {
-        setTimeout(function() {
-          this.emit('animationend');
-        }.bind(this), 0);
+        setTimeout(this.emit.bind(this), 0, 'animationend');
         return;
       }
       var dy = (rest > 0 ? 1 : -1) * Math.min(Math.abs(rest), 24);
@@ -221,9 +219,7 @@
         panel.top(panel.top() + dy);
         panel.redraw();
       });
-      setTimeout(function() {
-        this.movePanelsWithAnimation(rest - dy);
-      }.bind(this), 0);
+      setTimeout(this.movePanelsWithAnimation.bind(this), 0, rest - dy);
     });
   };
 

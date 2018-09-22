@@ -231,26 +231,20 @@
           return;
         }
         if (rest === 0) {
-          setTimeout(function() {
-            this.emit('animationend');
-          }.bind(this), 0);
+          setTimeout(this.emit.bind(this), 0, 'animationend');
           return;
         }
         var dx = (rest > 0 ? 1 : -1) * Math.min(Math.abs(rest), 24);
         this.scrollLeft(this.scrollLeft() - dx);
         this.onscroll(this.scrollLeft());
-        setTimeout(function() {
-          this.scrollWithAnimation(rest - dx);
-        }.bind(this), 0);
+        setTimeout(this.scrollWithAnimation.bind(this), 0, rest - dx);
       });
     };
 
     Content.prototype.onscroll = function(scrollLeft) {
       dom.translateX(this.element(), -scrollLeft);
       this.module.onscroll(scrollLeft);
-      setTimeout(function() {
-        this.emit('scroll');
-      }.bind(this), 0);
+      setTimeout(this.emit.bind(this), 0, 'scroll');
     };
 
     return Content;
