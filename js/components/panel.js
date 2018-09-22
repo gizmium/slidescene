@@ -34,7 +34,8 @@
   };
 
   Panel.prototype.scroll = function(dx) {
-    this.content.scroll(dx);
+    var scrollLeft = helper.clamp(this.content.scrollLeft() - dx, 0, this.content.width() - this.content.offsetWidth());
+    this.content.scrollLeft(scrollLeft);
   };
 
   Panel.prototype.scrollWithAnimation = function(dx) {
@@ -184,11 +185,6 @@
       return (this.scrollLeft() < (this.width() - this.offsetWidth()));
     };
 
-    Content.prototype.scroll = function(dx) {
-      var scrollLeft = helper.clamp(this.scrollLeft() - dx, 0, this.width() - this.offsetWidth());
-      this.scrollLeft(scrollLeft);
-    };
-
     Content.prototype.scrollToLeft = function() {
       var left = this.scrollLeft() % this.offsetWidth();
       this.scrollWithAnimation(left !== 0 ? left : this.offsetWidth());
@@ -202,15 +198,16 @@
     Content.prototype.load = function(url, medal) {
       return new Promise(function(resolve) {
         dom.once(this.element(), 'load', function() {
-          this.width(dom.contentWidth(this.element()));
-          this.height(dom.contentHeight(this.element()));
-          this.scrollLeft(this.medalIndex(medal) * this.offsetWidth());
-          this.redraw();
-          this.module = dom.contentWindow(this.element()).scene.exports;
-          this.onscroll(this.scrollLeft());
-          resolve();
+          resolve(dom.contentWindow(this.element()).scene.exports);
         }.bind(this));
         dom.attr(this.element(), { src: url });
+      }.bind(this)).then(function(module) {
+        this.width(dom.contentWidth(this.element()));
+        this.height(dom.contentHeight(this.element()));
+        this.scrollLeft(this.medalIndex(medal) * this.offsetWidth());
+        this.redraw();
+        this.module = module;
+        this.onscroll(this.scrollLeft());
       }.bind(this));
     };
 
@@ -223,11 +220,10 @@
       });
 
       this.redrawBy('scrollLeft', function(scrollLeft) {
-        dom.translateX(this.element(), -scrollLeft);
+        if (!this.module) {
+          return;
+        }
         this.onscroll(scrollLeft);
-        setTimeout(function() {
-          this.emit('scroll');
-        }.bind(this), 0);
       });
 
       this.redrawBy('scrollWithAnimation', function(rest) {
@@ -241,20 +237,20 @@
           return;
         }
         var dx = (rest > 0 ? 1 : -1) * Math.min(Math.abs(rest), 24);
-        this.scroll(dx);
-        dom.translateX(this.element(), -this.scrollLeft());
+        this.scrollLeft(this.scrollLeft() - dx);
         this.onscroll(this.scrollLeft());
         setTimeout(function() {
-          this.emit('scroll');
           this.scrollWithAnimation(rest - dx);
         }.bind(this), 0);
       });
     };
 
     Content.prototype.onscroll = function(scrollLeft) {
-      if (this.module) {
-        this.module.onscroll(scrollLeft);
-      }
+      dom.translateX(this.element(), -scrollLeft);
+      this.module.onscroll(scrollLeft);
+      setTimeout(function() {
+        this.emit('scroll');
+      }.bind(this), 0);
     };
 
     return Content;
