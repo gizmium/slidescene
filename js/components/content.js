@@ -153,9 +153,6 @@
   };
 
   Content.prototype.movePanels = function(dy) {
-    if (this.panels.length === 0) {
-      return;
-    }
     var minTop = this.panels.reduce(function(top, panel) {
       return (panel.visible() ? Math.min(top, panel.top()) : top);
     }, Number.MAX_VALUE);
@@ -319,6 +316,9 @@
     };
 
     Draggable.prototype.onmove = function(content, dx, dy, event, context) {
+      if (content.panels.length === 0) {
+        return;
+      }
       if (!context.lockY && !context.lockX) {
         context.lockY = (Math.abs(dy) >= 24);
       }
