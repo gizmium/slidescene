@@ -56,6 +56,7 @@
     return this.content.load(url).then(function() {
       var index = (medal ? this.content.indexOf(medal) : 0);
       this.content.scrollLeft(this.width() * index);
+      this.onscroll();
       return this;
     }.bind(this));
   };
