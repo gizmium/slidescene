@@ -31,7 +31,7 @@
 
   Content.prototype.panelFromTop = function(top) {
     return helper.find(this.panels, function(panel) {
-      return (panel.top() <= top && panel.bottom() >= top && panel.visible());
+      return (panel.top() <= top && panel.bottom() > top && panel.visible());
     });
   };
 
@@ -229,7 +229,7 @@
 
   Content.prototype.onanimationend = function() {
     var panel = this.panelFromTop(0);
-    if (!panel || panel.bottom() !== 0) {
+    if (!panel || panel.top() !== 0) {
       return;
     }
 
