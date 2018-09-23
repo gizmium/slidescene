@@ -199,11 +199,12 @@
     };
 
     Content.prototype.onredraw = function() {
-      this.redrawBy('width', 'height', function(width, height) {
-        dom.css(this.element(), {
-          height: height + 'px',
-          width: width + 'px',
-        });
+      this.redrawBy('width', function(width) {
+        dom.css(this.element(), { width: width + 'px' });
+      });
+
+      this.redrawBy('height', function(height) {
+        dom.css(this.element(), { height: height + 'px' });
       });
 
       this.redrawBy('scrollLeft', function(scrollLeft) {
