@@ -228,6 +228,11 @@
   };
 
   Content.prototype.onanimationend = function() {
+    var panel = this.panelFromTop(0);
+    if (!panel || panel.bottom() !== 0) {
+      return;
+    }
+
     // remove panels located on the out of the window
     this.panels.slice().forEach(function(panel) {
       if (panel.bottom() <= 0) {
