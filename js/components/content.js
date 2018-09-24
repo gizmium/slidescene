@@ -158,15 +158,22 @@
     dom.save('data', this.data());
   };
 
-  Content.prototype.showPanel = function(panel) {
-    panel.visible(true);
-    panel.redraw();
-    var nextPanel = this.panels.filter(function(next) {
+  Content.prototype.showNext = function(panel) {
+    var next = helper.find(this.panels, function(next) {
       return (next.previous === panel && next.medal() === panel.medal());
-    })[0];
-    if (nextPanel) {
-      this.showPanel(nextPanel);
+    });
+    if (!next) {
+      return;
     }
+    next.visible(true);
+    this.showNext(next);
+  };
+
+  Content.prototype.hideNext = function(panel) {
+    var visiblePanels = this.visiblePanels();
+    visiblePanels.slice(visiblePanels.indexOf(panel) + 1).forEach(function(panel) {
+      panel.visible(false);
+    });
   };
 
   Content.prototype.removePanel = function(panel) {
@@ -284,18 +291,9 @@
       // already removed or invisible
       return;
     }
-
     this.changeMedal(panel.medal());
-
-    // hide next panels
-    var visiblePanels = this.visiblePanels();
-    visiblePanels.slice(visiblePanels.indexOf(panel) + 1).forEach(function(panel) {
-      panel.visible(false);
-      panel.redraw();
-    });
-
-    // show next panels
-    this.showPanel(panel);
+    this.hideNext(panel);
+    this.showNext(panel);
     this.loadNewPanels().then(function() {
       this.save();
     }.bind(this));
