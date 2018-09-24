@@ -191,7 +191,9 @@
     if (!panel) {
       return;
     }
-    panel.scrollToLeft();
+    if (panel.canScrollToLeft()) {
+      panel.scrollToLeft();
+    }
   };
 
   Content.prototype.moveRight = function() {
@@ -199,7 +201,9 @@
     if (!panel) {
       return;
     }
-    panel.scrollToRight();
+    if (panel.canScrollToRight()) {
+      panel.scrollToRight();
+    }
   };
 
   Content.prototype.onredraw = function() {
