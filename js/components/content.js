@@ -188,38 +188,28 @@
 
   Content.prototype.moveUp = function() {
     var panel = this.panelFromTop(0);
-    if (!panel) {
-      return;
+    if (panel) {
+      this.moveWithAnimation(-panel.top());
     }
-    this.moveWithAnimation(-panel.top());
   };
 
   Content.prototype.moveDown = function() {
     var panel = this.panelFromTop(0);
-    if (!panel) {
-      return;
-    }
-    if (this.hasNextVisiblePanel(panel)) {
+    if (panel && this.hasNextVisiblePanel(panel)) {
       this.moveWithAnimation(-panel.bottom());
     }
   };
 
   Content.prototype.moveLeft = function() {
     var panel = this.panelFromTop(0);
-    if (!panel) {
-      return;
-    }
-    if (panel.canScrollToLeft()) {
+    if (panel && panel.canScrollToLeft()) {
       panel.scrollToLeft();
     }
   };
 
   Content.prototype.moveRight = function() {
     var panel = this.panelFromTop(0);
-    if (!panel) {
-      return;
-    }
-    if (panel.canScrollToRight()) {
+    if (panel && panel.canScrollToRight()) {
       panel.scrollToRight();
     }
   };
