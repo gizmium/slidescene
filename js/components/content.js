@@ -10,7 +10,7 @@
     this.medal = this.prop('');
     this.sound = this.prop('');
     this.moveWithAnimation = this.prop(0);
-    this.isLoading = this.prop(false);
+    this.needsLoadNewPanels = this.prop(true);
     this.panels = [];
     this.draggable = new Content.Draggable(this);
   });
@@ -57,10 +57,7 @@
 
   Content.prototype.load = function() {
     var data = dom.load('data', null);
-    if (data) {
-      return this.loadFromCache(data.medal, data.panels).then(this.onload.bind(this));
-    }
-    return this.loadDefault().then(this.onload.bind(this));
+    return (data ? this.loadData(data) : this.loadDefault());
   };
 
   Content.prototype.loadDefault = function() {
@@ -74,12 +71,12 @@
       return this.loadNewPanels();
     }.bind(this)).then(function() {
       this.removePanel(this.panels[0]);
-    }.bind(this));
+    }.bind(this)).then(this.onload.bind(this));
   };
 
-  Content.prototype.loadFromCache = function(medal, panels) {
-    this.changeMedal(medal);
-    return panels.reduce(function(promise, panel) {
+  Content.prototype.loadData = function(data) {
+    this.changeMedal(data.medal);
+    return data.panels.reduce(function(promise, panel) {
       return promise.then(function() {
         return this.loadPanel({
           top: panel.top,
@@ -91,12 +88,12 @@
       }.bind(this));
     }.bind(this), Promise.resolve()).then(function() {
       this.panels.forEach(function(panel, index) {
-        var index = panels[index].previous;
+        var index = data.panels[index].previous;
         if (index !== -1) {
           panel.previous = this.panels[index];
         }
       }.bind(this));
-    }.bind(this));
+    }.bind(this)).then(this.onload.bind(this));
   };
 
   Content.prototype.loadPanel = function(props) {
@@ -113,20 +110,7 @@
     }.bind(this));
   };
 
-  Content.prototype.loadNextPanel = function(panel) {
-    var next = panel.next();
-    if (!next) {
-      return Promise.resolve();
-    }
-    return this.loadPanel({
-      top: panel.bottom(),
-      previous: panel,
-      url: 'scenes/' + next + '.html',
-      medal: this.medal(),
-    });
-  };
-
-  Content.prototype.loadNewPanel = function() {
+  Content.prototype.loadNextPanel = function() {
     var visiblePanels = this.visiblePanels();
     if (visiblePanels.length === 0) {
       return Promise.resolve();
@@ -136,21 +120,31 @@
     if (last.bottom() > dom.offsetHeight(this.element()) + first.height()) {
       return Promise.resolve();
     }
-    return this.loadNextPanel(last).then(function(panel) {
-      if (panel && panel.medal() === this.medal()) {
-        panel.visible(true);
-        return this.loadNewPanel();
+    var next = last.next();
+    if (!next) {
+      return Promise.resolve();
+    }
+    return this.loadPanel({
+      top: last.bottom(),
+      previous: last,
+      url: 'scenes/' + next + '.html',
+      medal: this.medal(),
+    }).then(function(panel) {
+      if (!panel || panel.medal() !== this.medal()) {
+        return;
       }
+      panel.visible(true);
+      return this.loadNextPanel();
     }.bind(this));
   };
 
   Content.prototype.loadNewPanels = function() {
-    if (this.isLoading()) {
+    if (!this.needsLoadNewPanels()) {
       return Promise.resolve();
     }
-    this.isLoading(true);
-    return this.loadNewPanel().then(function() {
-      this.isLoading(false);
+    this.needsLoadNewPanels(false);
+    return this.loadNextPanel().then(function() {
+      this.needsLoadNewPanels(true);
     }.bind(this));
   };
 
