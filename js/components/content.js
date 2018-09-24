@@ -35,11 +35,25 @@
     });
   };
 
+  Content.prototype.data = function() {
+    return {
+      medal: this.medal(),
+      panels: this.panels.map(function(panel) {
+        return {
+          top: panel.top(),
+          visible: panel.visible(),
+          url: panel.url(),
+          medal: panel.medal(),
+          previous: this.panels.indexOf(panel.previous),
+        };
+      }.bind(this)),
+    };
+  };
+
   Content.prototype.load = function() {
-    var medal = dom.load('medal', null);
-    var panels = dom.load('panels', null);
-    if (medal && panels) {
-      return this.loadFromCache(medal, panels).then(this.onload.bind(this));
+    var data = dom.load('data', null);
+    if (data) {
+      return this.loadFromCache(data.medal, data.panels).then(this.onload.bind(this));
     }
     return this.loadDefault().then(this.onload.bind(this));
   };
@@ -135,6 +149,10 @@
     }.bind(this));
   };
 
+  Content.prototype.save = function() {
+    dom.save('data', this.data());
+  };
+
   Content.prototype.showPanel = function(panel) {
     panel.visible(true);
     panel.redraw();
@@ -226,7 +244,7 @@
 
   Content.prototype.onload = function() {
     this.onsound();
-    this.onpanels();
+    this.save();
     this.on('animationend', this.onanimationend.bind(this));
     this.draggable.enable();
   };
@@ -246,7 +264,7 @@
 
     this.loadNewPanels().then(function() {
       this.onsound();
-      this.onpanels();
+      this.save();
     }.bind(this));
   };
 
@@ -271,14 +289,13 @@
     // show next panels
     this.showPanel(panel);
     this.loadNewPanels().then(function() {
-      this.onpanels();
+      this.save();
     }.bind(this));
   };
 
   Content.prototype.onmedal = function(medal) {
     this.medal(medal);
     this.emit('medal', medal);
-    dom.save('medal', medal);
   };
 
   Content.prototype.onsound = function() {
@@ -292,18 +309,6 @@
     }
     this.sound(sound);
     this.emit('sound', sound);
-  };
-
-  Content.prototype.onpanels = function() {
-    dom.save('panels', this.panels.map(function(panel) {
-      return {
-        top: panel.top(),
-        previous: this.panels.indexOf(panel.previous),
-        visible: panel.visible(),
-        url: panel.url(),
-        medal: panel.medal(),
-      };
-    }.bind(this)));
   };
 
   Content.Draggable = (function() {
