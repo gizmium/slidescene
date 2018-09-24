@@ -9,7 +9,7 @@
   var Content = jCore.Component.inherits(function() {
     this.medal = this.prop('');
     this.sound = this.prop('');
-    this.movePanelsWithAnimation = this.prop(0);
+    this.moveWithAnimation = this.prop(0);
     this.isLoading = this.prop(false);
     this.panels = [];
     this.draggable = new Content.Draggable(this);
@@ -152,7 +152,7 @@
     helper.remove(this.panels, panel);
   };
 
-  Content.prototype.movePanels = function(dy) {
+  Content.prototype.move = function(dy) {
     var minTop = this.panels.reduce(function(top, panel) {
       return (panel.visible() ? Math.min(top, panel.top()) : top);
     }, Number.MAX_VALUE);
@@ -173,7 +173,7 @@
     if (!panel) {
       return;
     }
-    this.movePanelsWithAnimation(-panel.top());
+    this.moveWithAnimation(-panel.top());
   };
 
   Content.prototype.moveDown = function() {
@@ -182,7 +182,7 @@
       return;
     }
     if (this.hasNextVisiblePanel(panel)) {
-      this.movePanelsWithAnimation(-panel.bottom());
+      this.moveWithAnimation(-panel.bottom());
     }
   };
 
@@ -203,7 +203,7 @@
   };
 
   Content.prototype.onredraw = function() {
-    this.redrawBy('movePanelsWithAnimation', function(rest) {
+    this.redrawBy('moveWithAnimation', function(rest) {
       if (this.panels.length === 0) {
         return;
       }
@@ -216,7 +216,7 @@
         panel.top(panel.top() + dy);
         panel.redraw();
       });
-      setTimeout(this.movePanelsWithAnimation.bind(this), 0, rest - dy);
+      setTimeout(this.moveWithAnimation.bind(this), 0, rest - dy);
     });
   };
 
@@ -314,7 +314,7 @@
       context.lockY = false;
       context.lockX = false;
       context.panel = content.panelFromTop(y);
-      content.movePanelsWithAnimation(0);
+      content.moveWithAnimation(0);
       if (context.panel) {
         context.panel.scrollWithAnimation(0);
       }
@@ -345,7 +345,7 @@
       }
       context.dy = dy;
       context.ddy = ddy;
-      content.movePanels(ddy);
+      content.move(ddy);
     };
 
     Draggable.prototype.onmovex = function(content, dx, dy, event, context) {
@@ -378,7 +378,7 @@
         }, -Number.MAX_VALUE);
         if (maxTop < 0) {
           // all panels are located on the out of the window
-          content.movePanelsWithAnimation(-maxTop);
+          content.moveWithAnimation(-maxTop);
         }
         return;
       }
@@ -395,7 +395,7 @@
         // leave the last panel
         d = -overflowPanel.top();
       }
-      content.movePanelsWithAnimation(d);
+      content.moveWithAnimation(d);
       if (d === 0 && context.ddy !== 0) {
         // XXX: no need to move panels but handle 'animationend' event
         content.onanimationend();
