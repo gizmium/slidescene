@@ -15,11 +15,23 @@
     this.muteButton = new MuteButton({ element: this.findElement('.mute-button') });
   });
 
+  Main.prototype.unlockSound = function() {
+    var callback = function() {
+      this.sound.unlock(function() {
+        dom.off(dom.body(), 'mousedown', callback, true);
+      });
+    }.bind(this);
+    dom.on(dom.body(), 'mousedown', callback, true);
+  };
+
   Main.prototype.oninit = function() {
     this.content.on('medal', this.onmedal.bind(this));
     this.content.on('sound', this.onsound.bind(this));
     this.muteButton.on('mute', this.onmute.bind(this));
     this.muteButton.on('unmute', this.onunmute.bind(this));
+    if (!dom.supportsTouch()) {
+      this.unlockSound();
+    }
     this.content.load().then(function() {
       dom.on(this.element(), 'keydown', this.onkeydown.bind(this));
       dom.on(this.element(), 'wheel', this.onwheel.bind(this));
