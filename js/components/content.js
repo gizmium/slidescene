@@ -64,7 +64,7 @@
       url: 'scenes/index.html',
       medal: '',
     }).then(function(p) {
-      this.onmedal(p.medal());
+      this.changeMedal(p.medal());
       p.visible(true);
       return this.loadNewPanels();
     }.bind(this)).then(function() {
@@ -73,7 +73,7 @@
   };
 
   Content.prototype.loadFromCache = function(medal, panels) {
-    this.onmedal(medal);
+    this.changeMedal(medal);
     return panels.reduce(function(promise, panel) {
       return promise.then(function() {
         return this.loadPanel({
@@ -214,6 +214,14 @@
     }
   };
 
+  Content.prototype.changeMedal = function(medal) {
+    if (medal === this.medal()) {
+      return;
+    }
+    this.medal(medal);
+    this.emit('medal', medal);
+  };
+
   Content.prototype.onredraw = function() {
     this.redrawBy('moveWithAnimation', function(rest) {
       if (this.panels.length === 0) {
@@ -264,10 +272,7 @@
       return;
     }
 
-    var medal = panel.medal();
-    if (medal !== this.medal()) {
-      this.onmedal(medal);
-    }
+    this.changeMedal(panel.medal());
 
     // hide next panels
     var visiblePanels = this.visiblePanels();
@@ -281,11 +286,6 @@
     this.loadNewPanels().then(function() {
       this.save();
     }.bind(this));
-  };
-
-  Content.prototype.onmedal = function(medal) {
-    this.medal(medal);
-    this.emit('medal', medal);
   };
 
   Content.prototype.onsound = function() {
