@@ -35,6 +35,11 @@
     });
   };
 
+  Content.prototype.currentSound = function() {
+    var visiblePanels = this.visiblePanels();
+    return (visiblePanels.length !== 0 ? visiblePanels[0].sound() : this.sound());
+  };
+
   Content.prototype.data = function() {
     return {
       medal: this.medal(),
@@ -222,6 +227,14 @@
     this.emit('medal', medal);
   };
 
+  Content.prototype.changeSound = function(sound) {
+    if (sound === this.sound()) {
+      return;
+    }
+    this.sound(sound);
+    this.emit('sound', sound);
+  };
+
   Content.prototype.onredraw = function() {
     this.redrawBy('moveWithAnimation', function(rest) {
       if (this.panels.length === 0) {
@@ -241,7 +254,7 @@
   };
 
   Content.prototype.onload = function() {
-    this.onsound();
+    this.changeSound(this.currentSound());
     this.save();
     this.on('animationend', this.onanimationend.bind(this));
     this.draggable.enable();
@@ -261,7 +274,7 @@
     }.bind(this));
 
     this.loadNewPanels().then(function() {
-      this.onsound();
+      this.changeSound(this.currentSound());
       this.save();
     }.bind(this));
   };
@@ -286,19 +299,6 @@
     this.loadNewPanels().then(function() {
       this.save();
     }.bind(this));
-  };
-
-  Content.prototype.onsound = function() {
-    var visiblePanels = this.visiblePanels();
-    if (visiblePanels.length === 0) {
-      return;
-    }
-    var sound = visiblePanels[0].sound();
-    if (sound === this.sound()) {
-      return;
-    }
-    this.sound(sound);
-    this.emit('sound', sound);
   };
 
   Content.Draggable = (function() {
