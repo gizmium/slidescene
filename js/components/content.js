@@ -21,6 +21,12 @@
     });
   };
 
+  Content.prototype.lastPanel = function() {
+    return helper.max(this.panels, function(panel) {
+      return (panel.visible() ? panel.bottom() : -Infinity);
+    });
+  };
+
   Content.prototype.visiblePanels = function() {
     return this.panels.filter(function(panel) {
       return panel.visible();

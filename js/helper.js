@@ -23,6 +23,19 @@
     return null;
   };
 
+  helper.max = function(array, callback) {
+    var ret = null;
+    var max = -Infinity;
+    for (var i = 0, len = array.length; i < len; i++) {
+      var v = callback(array[i], i, array);
+      if (v > max) {
+        ret = array[i];
+        max = v;
+      }
+    }
+    return ret;
+  };
+
   helper.min = function(array, callback) {
     var ret = null;
     var min = Infinity;
