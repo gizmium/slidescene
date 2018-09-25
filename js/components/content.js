@@ -23,7 +23,7 @@
     });
   };
 
-  Content.prototype.hasNextVisiblePanel = function(panel) {
+  Content.prototype.hasNextPanel = function(panel) {
     return this.panels.some(function(next) {
       return (next.previous === panel && next.visible());
     });
@@ -201,7 +201,7 @@
 
   Content.prototype.moveDown = function() {
     var panel = this.panelFromTop(0);
-    if (panel && this.hasNextVisiblePanel(panel)) {
+    if (panel && this.hasNextPanel(panel)) {
       this.moveWithAnimation(-panel.bottom());
     }
   };
@@ -374,7 +374,7 @@
         return;
       }
       var d;
-      if (content.hasNextVisiblePanel(overflowPanel)) {
+      if (content.hasNextPanel(overflowPanel)) {
         var top = overflowPanel.top();
         var bottom = overflowPanel.bottom();
         if (top <= -24 && bottom >= 24) {
