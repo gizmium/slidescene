@@ -15,6 +15,12 @@
     this.draggable = new Content.Draggable(this);
   });
 
+  Content.prototype.firstPanel = function() {
+    return helper.min(this.panels, function(panel) {
+      return (panel.visible() ? panel.top() : Infinity);
+    });
+  };
+
   Content.prototype.visiblePanels = function() {
     return this.panels.filter(function(panel) {
       return panel.visible();

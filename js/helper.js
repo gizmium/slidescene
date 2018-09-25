@@ -23,6 +23,19 @@
     return null;
   };
 
+  helper.min = function(array, callback) {
+    var ret = null;
+    var min = Infinity;
+    for (var i = 0, len = array.length; i < len; i++) {
+      var v = callback(array[i], i, array);
+      if (v < min) {
+        ret = array[i];
+        min = v;
+      }
+    }
+    return ret;
+  };
+
   if (typeof module !== 'undefined' && module.exports) {
     module.exports = helper;
   } else {
