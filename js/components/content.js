@@ -152,7 +152,7 @@
     dom.save('data', this.data());
   };
 
-  Content.prototype.showNext = function(panel) {
+  Content.prototype.showNextPanel = function(panel) {
     var next = helper.find(this.panels, function(next) {
       return (next.previous === panel && next.medal() === panel.medal());
     });
@@ -160,10 +160,10 @@
       return;
     }
     next.visible(true);
-    this.showNext(next);
+    this.showNextPanel(next);
   };
 
-  Content.prototype.hideNext = function(panel) {
+  Content.prototype.hideNextPanel = function(panel) {
     var visiblePanels = this.visiblePanels();
     visiblePanels.slice(visiblePanels.indexOf(panel) + 1).forEach(function(panel) {
       panel.visible(false);
@@ -286,8 +286,8 @@
       return;
     }
     this.changeMedal(panel.medal());
-    this.hideNext(panel);
-    this.showNext(panel);
+    this.hideNextPanel(panel);
+    this.showNextPanel(panel);
     this.loadNewPanels().then(function() {
       this.save();
     }.bind(this));
