@@ -48,8 +48,8 @@
   };
 
   Content.prototype.currentSound = function() {
-    var visiblePanels = this.visiblePanels();
-    return (visiblePanels.length !== 0 ? visiblePanels[0].sound() : this.sound());
+    var panel = this.firstPanel();
+    return (panel ? panel.sound() : this.sound());
   };
 
   Content.prototype.data = function() {
