@@ -176,9 +176,10 @@
   };
 
   Content.prototype.hideNextPanel = function(panel) {
-    var visiblePanels = this.visiblePanels();
-    visiblePanels.slice(visiblePanels.indexOf(panel) + 1).forEach(function(panel) {
-      panel.visible(false);
+    this.panels.forEach(function(next) {
+      if (next.bottom() > panel.bottom() && next.visible()) {
+        next.visible(false);
+      }
     });
   };
 
