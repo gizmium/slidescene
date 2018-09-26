@@ -75,6 +75,9 @@
     return (data ? this.loadData(data) : this.loadDefault()).then(function() {
       this.changeSound(this.currentSound());
       this.save();
+
+      // XXX: redraw once before dispatching 'animationend' event
+      this.redraw();
       this.on('animationend', this.onanimationend.bind(this));
       this.draggable.enable();
     }.bind(this));
