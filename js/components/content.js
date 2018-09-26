@@ -72,7 +72,12 @@
 
   Content.prototype.load = function() {
     var data = dom.load('data', null);
-    return (data ? this.loadData(data) : this.loadDefault());
+    return (data ? this.loadData(data) : this.loadDefault()).then(function() {
+      this.changeSound(this.currentSound());
+      this.save();
+      this.on('animationend', this.onanimationend.bind(this));
+      this.draggable.enable();
+    }.bind(this));
   };
 
   Content.prototype.loadDefault = function() {
@@ -86,7 +91,7 @@
       return this.loadNewPanels();
     }.bind(this)).then(function() {
       this.removePanel(this.panels[0]);
-    }.bind(this)).then(this.onload.bind(this));
+    }.bind(this));
   };
 
   Content.prototype.loadData = function(data) {
@@ -108,7 +113,7 @@
           panel.previous = this.panels[index];
         }
       }.bind(this));
-    }.bind(this)).then(this.onload.bind(this));
+    }.bind(this));
   };
 
   Content.prototype.loadPanel = function(props) {
@@ -262,13 +267,6 @@
       });
       setTimeout(this.moveWithAnimation.bind(this), 0, rest - dy);
     });
-  };
-
-  Content.prototype.onload = function() {
-    this.changeSound(this.currentSound());
-    this.save();
-    this.on('animationend', this.onanimationend.bind(this));
-    this.draggable.enable();
   };
 
   Content.prototype.onanimationend = function() {
