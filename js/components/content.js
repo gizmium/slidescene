@@ -10,7 +10,7 @@
     this.medal = this.prop('');
     this.sound = this.prop('');
     this.moveWithAnimation = this.prop(0);
-    this.needsLoadNewPanels = this.prop(true);
+    this.needsNewPanels = this.prop(true);
     this.panels = [];
     this.draggable = new Content.Draggable(this);
   });
@@ -27,12 +27,15 @@
     });
   };
 
-  Content.prototype.visiblePanels = function() {
-    return this.panels.filter(function(panel) {
-      return panel.visible();
-    }).sort(function(a, b) {
-      return a.bottom() - b.bottom();
-    });
+  Content.prototype.needsNextPanel = function(panel) {
+    if (panel.bottom() > dom.offsetHeight(this.element()) + this.firstPanel().height()) {
+      return false;
+    }
+    var next = panel.next();
+    if (!next) {
+      return false;
+    }
+    return true;
   };
 
   Content.prototype.hasNextPanel = function(panel) {
@@ -122,41 +125,35 @@
     }.bind(this));
   };
 
-  Content.prototype.loadNextPanel = function() {
-    var visiblePanels = this.visiblePanels();
-    if (visiblePanels.length === 0) {
-      return Promise.resolve();
-    }
-    var first = visiblePanels[0];
-    var last = visiblePanels[visiblePanels.length - 1];
-    if (last.bottom() > dom.offsetHeight(this.element()) + first.height()) {
-      return Promise.resolve();
-    }
-    var next = last.next();
-    if (!next) {
+  Content.prototype.loadNextPanel = function(panel) {
+    if (!this.needsNextPanel(panel)) {
       return Promise.resolve();
     }
     return this.loadPanel({
-      top: last.bottom(),
-      previous: last,
-      url: 'scenes/' + next + '.html',
+      top: panel.bottom(),
+      previous: panel,
+      url: 'scenes/' + panel.next() + '.html',
       medal: this.medal(),
     }).then(function(panel) {
-      if (!panel || panel.medal() !== this.medal()) {
+      if (panel.medal() !== this.medal()) {
         return;
       }
       panel.visible(true);
-      return this.loadNextPanel();
+      return this.loadNextPanel(this.lastPanel());
     }.bind(this));
   };
 
   Content.prototype.loadNewPanels = function() {
-    if (!this.needsLoadNewPanels()) {
+    if (!this.needsNewPanels()) {
       return Promise.resolve();
     }
-    this.needsLoadNewPanels(false);
-    return this.loadNextPanel().then(function() {
-      this.needsLoadNewPanels(true);
+    var panel = this.lastPanel();
+    if (!panel) {
+      return Promise.resolve();
+    }
+    this.needsNewPanels(false);
+    return this.loadNextPanel(panel).then(function() {
+      this.needsNewPanels(true);
     }.bind(this));
   };
 
