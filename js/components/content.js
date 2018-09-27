@@ -89,9 +89,9 @@
       previous: null,
       url: 'scenes/index.html',
       medal: '',
-    }).then(function(p) {
-      this.changeMedal(p.medal());
-      p.visible(true);
+    }).then(function(panel) {
+      this.changeMedal(panel.medal());
+      panel.visible(true);
       return this.loadNewPanels();
     }.bind(this)).then(function() {
       this.removePanel(this.panels[0]);
@@ -100,15 +100,15 @@
 
   Content.prototype.loadData = function(data) {
     this.changeMedal(data.medal);
-    return data.panels.reduce(function(promise, panel) {
+    return data.panels.reduce(function(promise, panelData) {
       return promise.then(function() {
         return this.loadPanel({
-          top: panel.top,
+          top: panelData.top,
           previous: null,
-          url: panel.url,
-          medal: panel.medal,
-        }).then(function(p) {
-          p.visible(panel.visible);
+          url: panelData.url,
+          medal: panelData.medal,
+        }).then(function(panel) {
+          panel.visible(panelData.visible);
         });
       }.bind(this));
     }.bind(this), Promise.resolve()).then(function() {
