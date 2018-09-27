@@ -27,17 +27,6 @@
     });
   };
 
-  Content.prototype.needsNextPanel = function(panel) {
-    if (panel.bottom() > dom.offsetHeight(this.element()) + this.firstPanel().height()) {
-      return false;
-    }
-    var next = panel.next();
-    if (!next) {
-      return false;
-    }
-    return true;
-  };
-
   Content.prototype.panelFromTop = function(top) {
     return helper.find(this.panels, function(panel) {
       return (panel.top() <= top && panel.bottom() > top && panel.visible());
@@ -48,6 +37,17 @@
     return this.panels.filter(function(panel) {
       return (panel.bottom() <= 0);
     });
+  };
+
+  Content.prototype.needsNextPanel = function(panel) {
+    if (panel.bottom() > dom.offsetHeight(this.element()) + this.firstPanel().height()) {
+      return false;
+    }
+    var next = panel.next();
+    if (!next) {
+      return false;
+    }
+    return true;
   };
 
   Content.prototype.currentSound = function() {
@@ -166,10 +166,6 @@
     }.bind(this));
   };
 
-  Content.prototype.save = function() {
-    dom.save('data', this.data());
-  };
-
   Content.prototype.showNextPanel = function(panel) {
     var next = helper.find(this.panels, function(next) {
       return (next.previous === panel && next.medal() === panel.medal());
@@ -254,6 +250,10 @@
     }
     this.sound(sound);
     this.emit('sound', sound);
+  };
+
+  Content.prototype.save = function() {
+    dom.save('data', this.data());
   };
 
   Content.prototype.onredraw = function() {
