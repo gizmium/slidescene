@@ -84,17 +84,13 @@
   };
 
   Content.prototype.loadDefault = function() {
-    return this.loadPanel({
-      top: -24,
-      previous: null,
-      url: 'scenes/index.html',
-      medal: '',
-    }).then(function(panel) {
+    return this.loadRootPanel().then(function(panel) {
       this.changeMedal(panel.medal());
       panel.visible(true);
-      return this.loadNewPanels();
-    }.bind(this)).then(function() {
-      this.removePanel(this.panels[0]);
+      return this.loadNewPanels().then(function() {
+        // no need to keep the root panel
+        this.removePanel(panel);
+      }.bind(this));
     }.bind(this));
   };
 
@@ -132,6 +128,15 @@
       panel.on('animationend', this.onpanelanimationend.bind(this));
       return panel;
     }.bind(this));
+  };
+
+  Content.prototype.loadRootPanel = function() {
+    return this.loadPanel({
+      top: -24,
+      previous: null,
+      url: 'scenes/index.html',
+      medal: '',
+    });
   };
 
   Content.prototype.loadNextPanel = function(panel) {
