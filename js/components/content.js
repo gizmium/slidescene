@@ -86,6 +86,7 @@
   Content.prototype.loadDefault = function() {
     return this.loadPanel({
       top: -24,
+      previous: null,
       url: 'scenes/index.html',
       medal: '',
     }).then(function(p) {
@@ -103,6 +104,7 @@
       return promise.then(function() {
         return this.loadPanel({
           top: panel.top,
+          previous: null,
           url: panel.url,
           medal: panel.medal,
         }).then(function(p) {
