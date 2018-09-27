@@ -44,6 +44,12 @@
     });
   };
 
+  Content.prototype.outsidePanels = function() {
+    return this.panels.filter(function(panel) {
+      return (panel.bottom() <= 0);
+    });
+  };
+
   Content.prototype.currentSound = function() {
     var panel = this.firstPanel();
     return (panel ? panel.sound() : this.sound());
@@ -190,6 +196,12 @@
     helper.remove(this.panels, panel);
   };
 
+  Content.prototype.removePanels = function(panels) {
+    panels.forEach(function(panel) {
+      this.removePanel(panel);
+    }.bind(this));
+  };
+
   Content.prototype.move = function(dy) {
     var top = this.firstPanel().top();
     if (top + dy > 0) {
@@ -268,14 +280,7 @@
     if (!panel || panel.top() !== 0) {
       return;
     }
-
-    // remove panels located on the out of the window
-    this.panels.slice().forEach(function(panel) {
-      if (panel.bottom() <= 0) {
-        this.removePanel(panel);
-      }
-    }.bind(this));
-
+    this.removePanels(this.outsidePanels());
     this.loadNewPanels().then(function() {
       this.changeSound(this.currentSound());
       this.save();
