@@ -197,15 +197,10 @@
   };
 
   Content.prototype.move = function(dy) {
-    var minTop = this.panels.reduce(function(top, panel) {
-      return (panel.visible() ? Math.min(top, panel.top()) : top);
-    }, Number.MAX_VALUE);
-    if (minTop + dy > 0) {
-      // don't show an area above the top panel
-      dy = -minTop;
-    }
-    if (dy === 0) {
-      return;
+    var top = this.firstPanel().top();
+    if (top + dy > 0) {
+      // don't show an area above the first panel
+      dy = -top;
     }
     this.panels.forEach(function(panel) {
       panel.top(panel.top() + dy);
