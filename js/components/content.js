@@ -278,6 +278,7 @@
   Content.prototype.onanimationend = function() {
     var panel = this.panelFromTop(0);
     if (!panel || panel.top() !== 0) {
+      // stopped in the middle of the animation
       return;
     }
     this.removePanels(this.outsidePanels());
