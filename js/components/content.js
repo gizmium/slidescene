@@ -38,12 +38,6 @@
     return true;
   };
 
-  Content.prototype.hasNextPanel = function(panel) {
-    return this.panels.some(function(next) {
-      return (next.previous === panel && next.visible());
-    });
-  };
-
   Content.prototype.panelFromTop = function(top) {
     return helper.find(this.panels, function(panel) {
       return (panel.top() <= top && panel.bottom() > top && panel.visible());
@@ -216,7 +210,7 @@
 
   Content.prototype.moveDown = function() {
     var panel = this.panelFromTop(0);
-    if (panel && this.hasNextPanel(panel)) {
+    if (panel && panel !== this.lastPanel()) {
       this.moveWithAnimation(-panel.bottom());
     }
   };
