@@ -9,6 +9,7 @@
   var Sound = app.Sound || require('../controllers/sound.js');
 
   var Main = jCore.Component.inherits(function() {
+    this.disabled = this.prop(true);
     this.sound = new Sound();
     this.content = new Content({ element: this.findElement('.content') });
     this.medal = new Medal({ element: this.findElement('.medal') });
@@ -35,7 +36,14 @@
     this.content.load().then(function() {
       dom.on(this.element(), 'keydown', this.onkeydown.bind(this));
       dom.on(this.element(), 'wheel', this.onwheel.bind(this));
+      this.disabled(false);
     }.bind(this));
+  };
+
+  Main.prototype.onredraw = function() {
+    this.redrawBy('disabled', function(disabled) {
+      dom.toggleClass(this.element(), 'disabled', disabled);
+    });
   };
 
   Main.prototype.onmedal = function(medal) {
