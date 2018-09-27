@@ -384,7 +384,7 @@
         d = -lastPanel.top();
       }
       if (d === 0 && context.ddy !== 0) {
-        // XXX: no need to move panels but handle 'animationend' event
+        // XXX: no need to move content but handle 'animationend' event
         content.onanimationend();
         return;
       }
