@@ -112,11 +112,10 @@
         });
       }.bind(this));
     }.bind(this), Promise.resolve()).then(function() {
+      // set previous panel of each panel
       this.panels.forEach(function(panel, index) {
         var index = data.panels[index].previous;
-        if (index !== -1) {
-          panel.previous = this.panels[index];
-        }
+        panel.previous = this.panels[index] || null;
       }.bind(this));
     }.bind(this));
   };
