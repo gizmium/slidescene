@@ -326,7 +326,7 @@
       if (!context.lockX) {
         this.onmovey(content, dx, dy, event, context);
       }
-      if (!context.lockY) {
+      if (!context.lockY && context.panel) {
         this.onmovex(content, dx, dy, event, context);
       }
     };
@@ -342,9 +342,6 @@
     };
 
     Draggable.prototype.onmovex = function(content, dx, dy, event, context) {
-      if (!context.panel) {
-        return;
-      }
       var ddx = dx - context.dx;
       if (ddx === 0) {
         return;
@@ -359,7 +356,9 @@
         return;
       }
       this.onendy(content, dx, dy, event, context);
-      this.onendx(content, dx, dy, event, context);
+      if (context.panel) {
+        this.onendx(content, dx, dy, event, context);
+      }
     };
 
     Draggable.prototype.onendy = function(content, dx, dy, event, context) {
@@ -378,31 +377,30 @@
         // leave the last panel
         d = -lastPanel.top();
       }
-      content.moveWithAnimation(d);
       if (d === 0 && context.ddy !== 0) {
         // XXX: no need to move panels but handle 'animationend' event
         content.onanimationend();
+        return;
       }
+      content.moveWithAnimation(d);
     };
 
     Draggable.prototype.onendx = function(content, dx, dy, event, context) {
       var panel = context.panel;
-      if (!panel) {
-        return;
-      }
-      var d;
       var left = panel.left();
       var right = panel.right();
+      var d;
       if (left <= -24 && right >= 24) {
         d = (context.ddx > 0 ? -left : -right);
       } else {
         d = (-left < right ? -left : -right);
       }
-      panel.scrollWithAnimation(d);
       if (d === 0 && context.ddx !== 0) {
         // XXX: no need to scroll panel but handle 'animationend' event
         content.onpanelanimationend(panel);
+        return;
       }
+      panel.scrollWithAnimation(d);
     };
 
     return Draggable;
