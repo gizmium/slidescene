@@ -7,11 +7,11 @@
   var Panel = app.Panel || require('./panel.js');
 
   var Content = jCore.Component.inherits(function() {
+    this.panels = [];
     this.medal = this.prop('');
     this.sound = this.prop('');
-    this.moveWithAnimation = this.prop(0);
     this.needsNewPanels = this.prop(true);
-    this.panels = [];
+    this.moveWithAnimation = this.prop(0);
     this.draggable = new Content.Draggable(this);
   });
 
