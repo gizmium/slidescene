@@ -369,22 +369,12 @@
     };
 
     Draggable.prototype.onendy = function(content, dx, dy, event, context) {
-      // find that a part of the panel located on the out of the window
-      var overflowPanel = content.panelFromTop(0);
-      if (!overflowPanel) {
-        var maxTop = content.panels.reduce(function(top, panel) {
-          return (panel.visible() ? Math.max(top, panel.top()) : top);
-        }, -Number.MAX_VALUE);
-        if (maxTop < 0) {
-          // all panels are located on the out of the window
-          content.moveWithAnimation(-maxTop);
-        }
-        return;
-      }
+      var panel = content.panelFromTop(0);
+      var lastPanel = content.lastPanel();
       var d;
-      if (content.hasNextPanel(overflowPanel)) {
-        var top = overflowPanel.top();
-        var bottom = overflowPanel.bottom();
+      if (panel && panel !== lastPanel) {
+        var top = panel.top();
+        var bottom = panel.bottom();
         if (top <= -24 && bottom >= 24) {
           d = (context.ddy > 0 ? -top : -bottom);
         } else {
@@ -392,7 +382,7 @@
         }
       } else {
         // leave the last panel
-        d = -overflowPanel.top();
+        d = -lastPanel.top();
       }
       content.moveWithAnimation(d);
       if (d === 0 && context.ddy !== 0) {
