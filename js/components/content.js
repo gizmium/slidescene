@@ -193,6 +193,11 @@
   Content.prototype.removePanel = function(panel) {
     panel.removeAllListeners();
     panel.parentElement(null);
+    this.panels.forEach(function(next) {
+      if (next.previous === panel) {
+        next.previous = null;
+      }
+    });
     helper.remove(this.panels, panel);
   };
 
