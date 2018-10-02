@@ -1,5 +1,5 @@
 {
-  "name": "journey",
+  "name": "slidescene",
   "version": "0.0.1",
   "scripts": {
     "build": "npm run build:bundle && npm run build:js && npm run build:css",
