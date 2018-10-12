@@ -134,19 +134,15 @@
 
   Panel.prototype.onleft = function() {
     if (this.canScrollToLeft()) {
-      this.scrollToLeft();
-
       // XXX: start scrolling not to be interrupted by dragging content
-      this.content.redraw();
+      setTimeout(this.scrollToLeft.bind(this), 0);
     }
   };
 
   Panel.prototype.onright = function() {
     if (this.canScrollToRight()) {
-      this.scrollToRight();
-
       // XXX: start scrolling not to be interrupted by dragging content
-      this.content.redraw();
+      setTimeout(this.scrollToRight.bind(this), 0);
     }
   };
 
