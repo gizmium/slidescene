@@ -12,7 +12,7 @@
   "dependencies": {
     "es6-promise": "^4.2.4",
     "howler": "^2.0.10",
-    "jcore": "^0.3.0"
+    "jcore": "^0.3.1"
   },
   "devDependencies": {
     "browser-sync": "^2.24.5",
