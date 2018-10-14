@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title></title>
+  <style>
+    body {
+      background-color: #fafafa;
+      color: #212121;
+      height: 312px;
+      margin: 0;
+      width: 1248px;
+    }
+
+    .text {
+      position: fixed;
+      top: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="text"></div>
+  <script src="scene.js"></script>
+  <script>
+    (function() {
+      scene.load({
+        medals: ['001', '002'],
+        nexts: ['001', '002'],
+        sound: '001',
+        onscroll: function(x) {
+          var el = document.querySelector('.text');
+          el.style.left = x + 'px';
+          el.textContent = x;
+        },
+      });
+    })();
+  </script>
+</body>
+</html>
