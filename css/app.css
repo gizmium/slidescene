@@ -17,13 +17,10 @@ body {
   margin: 0;
   overflow: hidden;
   position: absolute;
-  -webkit-transition: opacity .5s ease-in-out;
-  transition: opacity .5s ease-in-out;
   width: 100%;
 }
 
 .main.disabled {
-  opacity: .3;
   pointer-events: none;
 }
 
